@@ -55,7 +55,17 @@ export default function Page() {
     <div className="flex flex-col gap-6">
       <Input className="lg:w-1/3 bg-gray-100" placeholder="Cerca utente..." />
 
-      <div className="grid grid-cols-[repeat(auto-fit,_minmax(350px,_1fr))] gap-4">
+      <div className="grid grid-cols-[repeat(auto-fit,_minmax(300px,_1fr))] gap-4">
+        {users.map((user) => (
+          <Utente key={user.id} user={user} />
+        ))}
+
+        {users.map((user) => (
+          <Utente key={user.id} user={user} />
+        ))}
+        {users.map((user) => (
+          <Utente key={user.id} user={user} />
+        ))}
         {users.map((user) => (
           <Utente key={user.id} user={user} />
         ))}
