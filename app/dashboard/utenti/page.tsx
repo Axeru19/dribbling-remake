@@ -59,10 +59,6 @@ export default function Page() {
         {users.map((user) => (
           <Utente key={user.id} user={user} />
         ))}
-
-        {users.map((user) => (
-          <Utente key={user.id} user={user} />
-        ))}
       </div>
     </div>
   );
