@@ -52,7 +52,7 @@ export default function Page() {
   }, [filter]);
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col h-full gap-6">
       <Input className="lg:w-1/3 bg-gray-100" placeholder="Cerca utente..." />
 
       <div className="grid grid-cols-[repeat(auto-fit,_minmax(300px,_1fr))] gap-4">
@@ -60,12 +60,6 @@ export default function Page() {
           <Utente key={user.id} user={user} />
         ))}
 
-        {users.map((user) => (
-          <Utente key={user.id} user={user} />
-        ))}
-        {users.map((user) => (
-          <Utente key={user.id} user={user} />
-        ))}
         {users.map((user) => (
           <Utente key={user.id} user={user} />
         ))}
