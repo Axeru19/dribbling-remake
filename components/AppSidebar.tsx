@@ -1,11 +1,8 @@
 import React from "react";
 
 import {
-  Calendar,
   CalendarDays,
   FileSliders,
-  Home,
-  Inbox,
   LogOut,
   OctagonAlert,
   Search,
@@ -26,6 +23,9 @@ import {
   SidebarGroup,
   SidebarRail,
 } from "./ui/sidebar";
+import { signOut, useSession } from "next-auth/react";
+import LogoutButton from "./logout-button";
+import { AppUser } from "@/types/types";
 
 const items = [
   {
@@ -50,16 +50,18 @@ const items = [
   },
   {
     title: "Utenti",
-    url: "#",
+    url: "/dashboard/utenti",
     icon: Users,
   },
 ];
 
-export default function AppSidebar() {
+export default async function AppSidebar({
+  user,
+}: Readonly<{ user: AppUser }>) {
   return (
     <Sidebar>
       <SidebarHeader>
-        <SidebarMenu>
+        <SidebarMenu className="px-2 pt-2">
           <SidebarMenuItem>
             <SidebarMenuButton
               asChild
@@ -72,7 +74,7 @@ export default function AppSidebar() {
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
-      <SidebarContent>
+      <SidebarContent className="px-2">
         <SidebarGroup>
           <SidebarGroupLabel>Funzionalità</SidebarGroupLabel>
           <SidebarGroupContent>
@@ -92,21 +94,24 @@ export default function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
-        <SidebarMenu>
+        <SidebarMenu className="p-2">
           <SidebarMenuItem>
-            <SidebarMenuButton size={"lg"}>
+            <SidebarMenuButton size={"lg"} asChild>
+              <a href="/dashboard/settings">
+                <Settings size={21} />
+                <span>Impostazioni</span>
+              </a>
+            </SidebarMenuButton>
+
+            <LogoutButton />
+
+            <SidebarMenuButton className="mt-2 h-fit" size={"lg"}>
               <div className="flex flex-col">
-                <span className="font-semibold">Paolo Laera</span>
-                <span className="text-xs">paololaera@gmail.com</span>
+                <span className="font-semibold">
+                  {user.name + " " + user.surname}
+                </span>
+                <span className="text-gray-500 text-xs">@{user.nickname}</span>
               </div>
-
-              <a className="ml-auto" href="/dashboard/settings">
-                <Settings size={20} />
-              </a>
-
-              <a className="ml-2" href="/logout">
-                <LogOut size={20} />
-              </a>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>

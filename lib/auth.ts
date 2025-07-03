@@ -37,10 +37,11 @@ export const authOptions: AuthOptions = {
         return {
           id: user.id.toString(),
           name: user.name ?? null,
+          surname: user.surname ?? null,
           email: user.email,
           nickname: user.nickname ?? null,
           telephone: user.telephone ?? null,
-          roleId: user.role_id ?? null,
+          role_id: user.role_id ?? null,
         };
       },
     }),
@@ -53,10 +54,11 @@ export const authOptions: AuthOptions = {
       if (user) {
         token.id = user.id;
         token.name = user.name;
+        token.surname = user.surname;
         token.email = user.email;
         token.nickname = user.nickname;
         token.telephone = user.telephone;
-        token.roleId = user.roleId;
+        token.role_id = user.role_id;
       }
       return token;
     },
@@ -64,10 +66,11 @@ export const authOptions: AuthOptions = {
       if (session.user) {
         session.user.id = token.id as string;
         session.user.name = token.name as string;
+        session.user.surname = token.surname as string;
         session.user.email = token.email as string;
         session.user.nickname = token.nickname as string;
         session.user.telephone = token.telephone as string;
-        session.user.roleId = token.roleId as number;
+        session.user.role_id = token.role_id as number;
       }
       return session;
     },

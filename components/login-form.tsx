@@ -46,7 +46,7 @@ export function LoginForm() {
       // Login riuscito → puoi fare un redirect
       setTimeout(() => {
         window.location.href = "/dashboard";
-      }, 1500); // Redirect to dashboard after 1 second
+      }, 1000); // Redirect to dashboard after 1 second
     } else {
       // Login fallito → mostra messaggio di errore
       toast.error("Credenziali non valide. Riprova.");
