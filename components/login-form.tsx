@@ -17,10 +17,7 @@ import {
 import { toast } from "sonner";
 
 const formSchema = z.object({
-  email: z
-    .string()
-    .min(1, "L'email è obbligatoria")
-    .email("Inserisci un'email valida"),
+  email: z.string().email("Inserisci un'email valida"),
   password: z.string().min(1, "La password è obbligatoria"),
 });
 

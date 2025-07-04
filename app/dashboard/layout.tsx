@@ -37,7 +37,7 @@ export default async function layout({
           <Pathname />
         </header>
 
-        <div className="p-6 w-full h-full overflow-auto">{children}</div>
+        <div className="p-6 w-full h-full">{children}</div>
       </main>
     </SidebarProvider>
   );
