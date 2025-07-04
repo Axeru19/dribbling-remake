@@ -90,7 +90,7 @@ export default function UserDialog({
 
   return (
     <Dialog open={dialogOpen} onOpenChange={(open) => setDialogOpen(open)}>
-      <DialogContent>
+      <DialogContent onOpenAutoFocus={(e) => e.preventDefault()}>
         <DialogHeader>
           <DialogTitle>
             <span>{user?.name + " " + user?.surname}</span>
