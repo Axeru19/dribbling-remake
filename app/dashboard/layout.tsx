@@ -12,8 +12,8 @@ import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: {
-    template: "%s | Dashboard",
-    default: "Dashboard - Dribbling Remake",
+    template: "%s | Dribbling",
+    default: "Dribbling | Dashboard",
   },
   robots: {
     index: false,
