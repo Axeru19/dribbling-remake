@@ -6,10 +6,11 @@ import { users } from "@prisma/client";
 
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const userId = params.id;
+    const { id } = await params;
+    const userId = id;
 
     // Controllo se l'ID dell'utente è valido
     if (!userId || isNaN(Number(userId))) {
