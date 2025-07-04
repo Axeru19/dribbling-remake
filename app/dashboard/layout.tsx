@@ -8,6 +8,23 @@ import { getServerSession } from "next-auth";
 import { AppUser } from "@/types/types";
 import { authOptions } from "@/lib/auth";
 import Pathname from "@/components/pathname";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: {
+    template: "%s | Dashboard",
+    default: "Dashboard - Dribbling Remake",
+  },
+  robots: {
+    index: false,
+    follow: false,
+  },
+  openGraph: {
+    title: "Dashboard",
+    description: "Area riservata per la gestione dell'applicazione",
+    type: "website",
+  },
+};
 
 export default async function layout({
   children,
