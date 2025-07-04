@@ -24,3 +24,9 @@ model users {
   role_id   Int?    @db.SmallInt
   roles     roles?  @relation(fields: [role_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "users_roles_fk")
 }
+
+model fields {
+  id          Int     @id(map: "fields_pk") @default(autoincrement())
+  description String? @db.VarChar
+  status      Boolean @default(true)
+}

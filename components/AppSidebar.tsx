@@ -45,7 +45,7 @@ const items = [
   },
   {
     title: "Campi",
-    url: "#",
+    url: "/dashboard/campi",
     icon: FileSliders,
   },
   {
