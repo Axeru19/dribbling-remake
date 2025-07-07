@@ -1,6 +1,7 @@
 import { NextResponse, NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { AppUser } from "@/types/types";
+import { users_wallets } from "@prisma/client";
 
 export async function POST(request: NextRequest) {
   try {
@@ -8,7 +9,7 @@ export async function POST(request: NextRequest) {
     const filter: string = body.filter || "";
 
     // cerco per nome cognome mail nickname e numero di telefono
-    const users = (await prisma.users.findMany({
+    const users: users_wallets[] = await prisma.users_wallets.findMany({
       where: {
         OR: [
           { name: { contains: filter, mode: "insensitive" } },
@@ -18,13 +19,15 @@ export async function POST(request: NextRequest) {
           { telephone: { contains: filter, mode: "insensitive" } },
         ],
       },
-    })) as unknown as AppUser[];
+    });
 
     // handle biserial id error
 
     const safeUsers = users.map((user) => ({
       ...user,
-      id: user?.id!.toString(), // 👈 evita l'errore di serializzazione
+      user_id: user?.user_id!.toString(),
+      wallet_id: user?.wallet_id!.toString(),
+      // 👈 evita l'errore di serializzazione
     }));
 
     return NextResponse.json(safeUsers);

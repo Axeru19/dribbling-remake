@@ -7,6 +7,12 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model fields {
+  id          Int     @id(map: "fields_pk") @default(autoincrement())
+  description String? @db.VarChar
+  status      Boolean @default(true)
+}
+
 model roles {
   id    Int     @id(map: "roles_pk") @default(autoincrement()) @db.SmallInt
   macro String? @db.VarChar
@@ -14,19 +20,52 @@ model roles {
 }
 
 model users {
-  id        BigInt  @id(map: "users_pk") @default(autoincrement())
-  name      String? @db.VarChar
-  surname   String? @db.VarChar
-  nickname  String? @db.VarChar
-  telephone String? @db.VarChar
-  email     String? @unique(map: "users_unique") @db.VarChar
-  password  String? @db.VarChar
-  role_id   Int?    @db.SmallInt
-  roles     roles?  @relation(fields: [role_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "users_roles_fk")
+  id        BigInt    @id(map: "users_pk") @default(autoincrement())
+  name      String?   @db.VarChar
+  surname   String?   @db.VarChar
+  nickname  String?   @db.VarChar
+  telephone String?   @db.VarChar
+  email     String?   @unique(map: "users_unique") @db.VarChar
+  password  String?   @db.VarChar
+  role_id   Int?      @db.SmallInt
+  roles     roles?    @relation(fields: [role_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "users_roles_fk")
+  wallets   wallets[]
 }
 
-model fields {
-  id          Int     @id(map: "fields_pk") @default(autoincrement())
-  description String? @db.VarChar
-  status      Boolean @default(true)
+model wallet_actions {
+  id          Int           @id(map: "wallet_actions_pk") @default(autoincrement()) @db.SmallInt
+  description String?       @db.VarChar
+  wallets_log wallets_log[]
 }
+
+model wallets {
+  id          BigInt        @id(map: "wallets_pk") @default(autoincrement())
+  balance     Decimal?      @db.Decimal(12, 2)
+  id_user     BigInt?
+  users       users?        @relation(fields: [id_user], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "wallets_users_fk")
+  wallets_log wallets_log[]
+}
+
+model wallets_log {
+  id             BigInt          @id(map: "wallets_log_pk") @default(autoincrement())
+  event_time     DateTime?       @db.Timestamptz(6)
+  id_wallet      BigInt?
+  id_action      Int?            @db.SmallInt
+  amount         Decimal?        @db.Decimal(12, 2)
+  wallet_actions wallet_actions? @relation(fields: [id_action], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "wallets_log_wallet_actions_fk")
+  wallets        wallets?        @relation(fields: [id_wallet], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "wallets_log_wallets_fk")
+}
+
+model users_wallets {
+  user_id   Int    @id
+  name      String
+  surname   String
+  nickname  String
+  email     String
+  telephone String
+  wallet_id Int?   // può essere null perché è un LEFT JOIN
+  balance   Float? // può essere null perché è un LEFT JOIN
+
+  @@map("users_wallets")
+}
+

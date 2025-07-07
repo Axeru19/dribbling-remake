@@ -3,6 +3,7 @@ import React from "react";
 import {
   CalendarDays,
   FileSliders,
+  HandCoins,
   LogOut,
   OctagonAlert,
   Search,
@@ -40,8 +41,8 @@ const items = [
   },
   {
     title: "Pagamenti",
-    url: "#",
-    icon: WalletCards,
+    url: "/dashboard/pagamenti",
+    icon: HandCoins,
   },
   {
     title: "Campi",

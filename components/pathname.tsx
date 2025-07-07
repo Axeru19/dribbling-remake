@@ -14,7 +14,6 @@ import { usePathname } from "next/navigation";
 
 export default function Pathname() {
   let pathname = usePathname(); // Remove the first empty segment if it exists
-  console.log("pathname" + pathname);
 
   return (
     <Breadcrumb>

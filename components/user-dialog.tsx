@@ -19,6 +19,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormField, FormItem, FormLabel, FormMessage } from "./ui/form";
 import { Input } from "./ui/input";
 import { toast } from "sonner";
+import { users_wallets } from "@prisma/client";
+import { Separator } from "@/components/ui/separator";
+import { Alert, AlertTitle } from "./ui/alert";
+import { BadgeInfo } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 
 const formSchema = z.object({
   name: z.string().min(1, "Il nome è obbligatorio"),
@@ -30,6 +35,15 @@ const formSchema = z.object({
   nickname: z.string().min(1, "Il nickname è obbligatorio"),
   email: z.string().email("Inserisci un'email valida"),
   password: z.string(),
+  topUpAmount: z
+    .number(
+      /* se non ho un numero comunico di inserire un valore numerico */
+      {
+        message: "Inserisci un importo valido per la ricarica",
+      }
+    )
+    .min(0, "L'importo della ricarica deve essere maggiore o uguale a 0")
+    .optional(),
 });
 
 export default function UserDialog({
@@ -38,7 +52,7 @@ export default function UserDialog({
   setDialogOpen,
   setReload,
 }: {
-  user: AppUser;
+  user: users_wallets;
   dialogOpen: boolean;
   setDialogOpen: (open: boolean) => void;
   setReload: (value: number | ((prev: number) => number)) => void; // Function to trigger a reload
@@ -48,13 +62,15 @@ export default function UserDialog({
   }
 
   function onSubmit(data: z.infer<typeof formSchema>) {
+    // from data remove topUpAmount
+    const { topUpAmount, ...userData } = data;
     // Handle form submission logic here
-    fetch(`/api/users/${user.id}`, {
+    fetch(`/api/users/${user.user_id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(data),
+      body: JSON.stringify(userData),
     })
       .then((response) => {
         if (!response.ok) {
@@ -93,19 +109,53 @@ export default function UserDialog({
       <DialogContent onOpenAutoFocus={(e) => e.preventDefault()}>
         <DialogHeader>
           <DialogTitle>
-            <span>{user?.name + " " + user?.surname}</span>
+            <span>
+              {user?.name + " " + user?.surname}
+              {" - "}
+              <span className="text-gray-400">
+                {new Intl.NumberFormat("it-IT", {
+                  style: "currency",
+                  currency: "EUR",
+                }).format(user.balance || 0)}
+              </span>
+            </span>
           </DialogTitle>
           <DialogDescription>
             In questa sezione puoi visualizzare e modificare i dettagli
             dell'utente.
           </DialogDescription>
         </DialogHeader>
-
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
             className="grid gap-6 p-2 overflow-y-auto h-full max-h-[40vh]"
           >
+            <div className="lg:col-span-2 gap-6 flex flex-col">
+              <FormField
+                control={form.control}
+                name="topUpAmount"
+                render={({ field }) => (
+                  <FormItem className="w-full">
+                    <FormLabel>Importo ricarica</FormLabel>
+                    <Input
+                      type="number"
+                      placeholder="Inserisci l'importo da ricaricare"
+                      {...field}
+                      onChange={(e) =>
+                        field.onChange(parseFloat(e.target.value))
+                      }
+                    />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <Button variant={"secondary"} type="button">
+                Ricarica
+              </Button>
+            </div>
+
+            <Separator className="lg:col-span-2" />
+
             <FormField
               control={form.control}
               name="name"

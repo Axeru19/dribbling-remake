@@ -13,6 +13,7 @@ import {
 import { Input } from "@/components/ui/input";
 import UserDialog from "@/components/user-dialog";
 import { AppUser } from "@/types/types";
+import { users_wallets } from "@prisma/client";
 import { set } from "date-fns";
 import { Mail, Smartphone, UserPen } from "lucide-react";
 import Link from "next/link";
@@ -20,10 +21,10 @@ import React, { use, useEffect, useState } from "react";
 import { toast } from "sonner";
 
 export default function Page() {
-  const [users, setUsers] = useState<AppUser[]>([]);
+  const [users, setUsers] = useState<users_wallets[]>([]);
   const [filter, setFilter] = useState<string>("");
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
-  const [userSelected, setUserSelected] = useState<AppUser | null>(null);
+  const [userSelected, setUserSelected] = useState<users_wallets | null>(null);
   const [reload, setReload] = useState<number>(0);
 
   //aggiungo  debounce per filtro
@@ -67,7 +68,7 @@ export default function Page() {
         {users.map((user) => (
           <Utente
             setDialogOpen={setDialogOpen}
-            key={user.id}
+            key={user.user_id}
             user={user}
             setUserSelected={setUserSelected}
           />
@@ -89,9 +90,9 @@ function Utente({
   setDialogOpen,
   setUserSelected,
 }: {
-  user: AppUser;
+  user: users_wallets;
   setDialogOpen: (open: boolean) => void;
-  setUserSelected: (user: AppUser) => void;
+  setUserSelected: (user: users_wallets) => void;
 }) {
   return (
     <Card
@@ -102,7 +103,16 @@ function Utente({
       }}
     >
       <CardHeader>
-        <CardTitle>{user.name + " " + user.surname}</CardTitle>
+        <CardTitle>
+          {user.name + " " + user.surname}
+          {" - "}
+          <span className="text-gray-400">
+            {new Intl.NumberFormat("it-IT", {
+              style: "currency",
+              currency: "EUR",
+            }).format(user.balance || 0)}
+          </span>
+        </CardTitle>
         <CardDescription>@{user.nickname}</CardDescription>
 
         <CardAction>
