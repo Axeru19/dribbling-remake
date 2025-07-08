@@ -56,6 +56,7 @@ model wallets_log {
   wallets        wallets?        @relation(fields: [id_wallet], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "wallets_log_wallets_fk")
 }
 
+// START VIEWS
 model users_wallets {
   user_id   Int    @id
   name      String
@@ -69,3 +70,4 @@ model users_wallets {
   @@map("users_wallets")
 }
 
+// END VIEWS
