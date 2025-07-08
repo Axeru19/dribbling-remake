@@ -30,13 +30,13 @@ import { AppUser } from "@/types/types";
 
 const items = [
   {
-    title: "Prenotazioni",
+    title: "Partite",
     url: "#",
     icon: CalendarDays,
   },
   {
     title: "Prenotazioni in arrivo",
-    url: "#",
+    url: "/dashboard/prenotazioni",
     icon: OctagonAlert,
   },
   {
