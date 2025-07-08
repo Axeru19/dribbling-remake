@@ -97,13 +97,6 @@ export default async function AppSidebar({
       <SidebarFooter>
         <SidebarMenu className="p-2">
           <SidebarMenuItem>
-            <SidebarMenuButton size={"lg"} asChild>
-              <a href="/dashboard/settings">
-                <Settings size={21} />
-                <span>Impostazioni</span>
-              </a>
-            </SidebarMenuButton>
-
             <LogoutButton />
 
             <SidebarMenuButton className="mt-2 h-fit" size={"lg"}>
