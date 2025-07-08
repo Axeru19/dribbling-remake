@@ -1,0 +1,12 @@
+model users_wallets {
+  user_id   Int    @id
+  name      String
+  surname   String
+  nickname  String
+  email     String
+  telephone String
+  wallet_id Int?   // può essere null perché è un LEFT JOIN
+  balance   Float? // può essere null perché è un LEFT JOIN
+
+  @@map("users_wallets")
+}
