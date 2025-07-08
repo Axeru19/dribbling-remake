@@ -1,6 +1,4 @@
 "use client";
-
-import { AppUser } from "@/types/types";
 import React from "react";
 import {
   DialogHeader,
@@ -21,9 +19,7 @@ import { Input } from "./ui/input";
 import { toast } from "sonner";
 import { users_wallets } from "@prisma/client";
 import { Separator } from "@/components/ui/separator";
-import { Alert, AlertTitle } from "./ui/alert";
-import { BadgeInfo } from "lucide-react";
-import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
+import { WalletUpdateType } from "@/types/enums";
 
 const formSchema = z.object({
   name: z.string().min(1, "Il nome è obbligatorio"),
@@ -91,6 +87,38 @@ export default function UserDialog({
       });
   }
 
+  function onWalletTopUp(data: z.infer<typeof formSchema>) {
+    const body = {
+      type: WalletUpdateType.ADD,
+      amount: data.topUpAmount || 0, // Use the topUpAmount from the form
+    };
+
+    fetch(`/api/wallets/${user.wallet_id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Errore durante la ricarica del portafoglio");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        toast.success("Portafoglio ricaricato con successo!");
+        setDialogOpen(false);
+        setReload((prev: number) => prev + 1); // Trigger a reload
+      })
+      .catch((error) => {
+        toast.error(
+          "Si è verificato un errore durante la ricarica del portafoglio."
+        );
+        // You can show an error message to the user here
+      });
+  }
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     mode: "onChange",
@@ -149,7 +177,11 @@ export default function UserDialog({
                   </FormItem>
                 )}
               />
-              <Button variant={"secondary"} type="button">
+              <Button
+                onClick={() => form.handleSubmit(onWalletTopUp)()}
+                variant={"secondary"}
+                type="button"
+              >
                 Ricarica
               </Button>
             </div>
