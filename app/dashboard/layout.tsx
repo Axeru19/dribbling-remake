@@ -44,8 +44,8 @@ export default async function layout({
   return (
     <SidebarProvider defaultOpen={defaultOpen}>
       <AppSidebar user={user} />
-      <main className="w-full h-full">
-        <header className="flex gap-2 p-3 items-center w-full border-b">
+      <main className="w-full h-dvh">
+        <header className="flex h-1/16 gap-2 p-3 items-center w-full border-b">
           <SidebarTrigger />
           <Separator
             orientation="vertical"
@@ -54,7 +54,7 @@ export default async function layout({
           <Pathname />
         </header>
 
-        <div className="p-6 w-full h-full">{children}</div>
+        <div className="p-6 w-full h-15/16">{children}</div>
       </main>
     </SidebarProvider>
   );

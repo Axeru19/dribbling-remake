@@ -36,13 +36,13 @@ export default function page() {
   }, [reload]);
 
   return (
-    <div className="w-full flex flex-col gap-6">
+    <div className="w-full h-full flex flex-col gap-6">
       <Button disabled className="w-fit">
         {" "}
         <Plus /> Aggiungi campo
       </Button>
 
-      <div className="lg:flex-row flex-col flex gap-6">
+      <div className="lg:flex-row overflow-y-auto ove flex-col flex gap-6">
         {fields
           .sort((a, b) => a.id - b.id)
           .map((field) => (

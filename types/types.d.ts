@@ -9,3 +9,13 @@ export type AppUser = {
   telephone?: string | null;
   role_id?: number | null;
 };
+
+export type ReservationPostRequest = {
+  start_date?: string;
+  end_date?: string;
+  id_user?: number;
+  id_field?: number;
+  start_time?: string;
+  end_time?: string;
+  incoming?: boolean;
+};

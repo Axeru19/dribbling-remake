@@ -8,9 +8,10 @@ datasource db {
 }
 
 model fields {
-  id          Int     @id(map: "fields_pk") @default(autoincrement())
-  description String? @db.VarChar
-  status      Boolean @default(true)
+  id           Int            @id(map: "fields_pk") @default(autoincrement())
+  description  String?        @db.VarChar
+  status       Boolean        @default(true)
+  reservations reservations[]
 }
 
 model roles {
@@ -20,16 +21,17 @@ model roles {
 }
 
 model users {
-  id        BigInt    @id(map: "users_pk") @default(autoincrement())
-  name      String?   @db.VarChar
-  surname   String?   @db.VarChar
-  nickname  String?   @db.VarChar
-  telephone String?   @db.VarChar
-  email     String?   @unique(map: "users_unique") @db.VarChar
-  password  String?   @db.VarChar
-  role_id   Int?      @db.SmallInt
-  roles     roles?    @relation(fields: [role_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "users_roles_fk")
-  wallets   wallets[]
+  id           BigInt         @id(map: "users_pk") @default(autoincrement())
+  name         String?        @db.VarChar
+  surname      String?        @db.VarChar
+  nickname     String?        @db.VarChar
+  telephone    String?        @db.VarChar
+  email        String?        @unique(map: "users_unique") @db.VarChar
+  password     String?        @db.VarChar
+  role_id      Int?           @db.SmallInt
+  reservations reservations[]
+  roles        roles?         @relation(fields: [role_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "users_roles_fk")
+  wallets      wallets[]
 }
 
 model wallet_actions {
@@ -56,6 +58,20 @@ model wallets_log {
   wallets        wallets?        @relation(fields: [id_wallet], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "wallets_log_wallets_fk")
 }
 
+model reservations {
+  id         BigInt    @id(map: "reservations_pk") @default(autoincrement())
+  date       DateTime? @db.Date
+  start_time DateTime? @db.Time(6)
+  end_time   DateTime? @db.Time(6)
+  id_field   Int?
+  id_user    BigInt?
+  notes      String?   @db.VarChar
+  room       String?   @db.VarChar
+  incoming   Boolean?  @default(false)
+  fields     fields?   @relation(fields: [id_field], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "reservations_fields_fk")
+  users      users?    @relation(fields: [id_user], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "reservations_users_fk")
+}
+
 // START VIEWS
 model users_wallets {
   user_id   Int    @id
@@ -68,6 +84,25 @@ model users_wallets {
   balance   Float? // può essere null perché è un LEFT JOIN
 
   @@map("users_wallets")
+}
+
+
+model view_reservations {
+  id          Int      @id
+  date        DateTime
+  start_time  DateTime
+  end_time    DateTime
+  room        String?
+  notes       String? 
+  incoming    Boolean
+  name        String?
+  surname     String?
+  telephone   String?
+  email       String?
+  nickname    String?
+  description String?
+
+  @@map("view_reservations")
 }
 
 // END VIEWS

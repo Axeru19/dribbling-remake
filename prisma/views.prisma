@@ -10,3 +10,22 @@ model users_wallets {
 
   @@map("users_wallets")
 }
+
+
+model view_reservations {
+  id          Int      @id
+  date        DateTime
+  start_time  DateTime
+  end_time    DateTime
+  room        String?
+  notes       String? 
+  incoming    Boolean
+  name        String?
+  surname     String?
+  telephone   String?
+  email       String?
+  nickname    String?
+  description String?
+
+  @@map("view_reservations")
+}
