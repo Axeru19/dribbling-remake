@@ -19,13 +19,14 @@ model view_reservations {
   end_time    DateTime
   room        String?
   notes       String? 
-  incoming    Boolean
   name        String?
   surname     String?
   telephone   String?
   email       String?
   nickname    String?
   description String?
+  mixed       Boolean?
+  status      String?
 
   @@map("view_reservations")
 }

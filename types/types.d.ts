@@ -17,5 +17,5 @@ export type ReservationPostRequest = {
   id_field?: number;
   start_time?: string;
   end_time?: string;
-  incoming?: boolean;
+  id_status?: number;
 };

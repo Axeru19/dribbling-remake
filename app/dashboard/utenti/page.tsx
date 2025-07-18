@@ -62,7 +62,7 @@ export default function Page() {
       <Input className="lg:w-1/3 bg-gray-100" placeholder="Cerca utente..." />
 
       <div
-        className="overflow-y-auto gap-4
+        className="overflow-y-auto gap-6
          flex flex-col lg:grid lg:grid-cols-[repeat(auto-fit,_minmax(300px,_1fr))]"
       >
         {users.map((user) => (

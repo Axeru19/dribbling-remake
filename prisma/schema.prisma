@@ -59,17 +59,26 @@ model wallets_log {
 }
 
 model reservations {
-  id         BigInt    @id(map: "reservations_pk") @default(autoincrement())
-  date       DateTime? @db.Date
-  start_time DateTime? @db.Time(6)
-  end_time   DateTime? @db.Time(6)
-  id_field   Int?
-  id_user    BigInt?
-  notes      String?   @db.VarChar
-  room       String?   @db.VarChar
-  incoming   Boolean?  @default(false)
-  fields     fields?   @relation(fields: [id_field], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "reservations_fields_fk")
-  users      users?    @relation(fields: [id_user], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "reservations_users_fk")
+  id                   BigInt                @id(map: "reservations_pk") @default(autoincrement())
+  date                 DateTime?             @db.Date
+  start_time           DateTime?             @db.Time(6)
+  end_time             DateTime?             @db.Time(6)
+  id_field             Int?
+  id_user              BigInt?
+  notes                String?               @db.VarChar
+  room                 String?               @db.VarChar
+  incoming             Boolean?              @default(false)
+  mixed                Boolean?              @default(false)
+  id_status            Int?                  @default(1)
+  fields               fields?               @relation(fields: [id_field], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "reservations_fields_fk")
+  reservation_statuses reservation_statuses? @relation(fields: [id_status], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "reservations_reservation_statuses_fk")
+  users                users?                @relation(fields: [id_user], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "reservations_users_fk")
+}
+
+model reservation_statuses {
+  id           Int            @id(map: "reservation_statuses_pk") @default(autoincrement())
+  description  String?        @db.VarChar
+  reservations reservations[]
 }
 
 // START VIEWS
@@ -94,13 +103,14 @@ model view_reservations {
   end_time    DateTime
   room        String?
   notes       String? 
-  incoming    Boolean
   name        String?
   surname     String?
   telephone   String?
   email       String?
   nickname    String?
   description String?
+  mixed       Boolean?
+  status      String?
 
   @@map("view_reservations")
 }
