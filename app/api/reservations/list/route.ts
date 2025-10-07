@@ -13,6 +13,7 @@ export async function POST(request: NextRequest) {
       id_status: body.id_status ?? undefined,
       id_user: body.id_user ?? undefined,
       id_field: body.id_field ?? undefined,
+      date: body.date ? new Date(body.date) : undefined,
     },
   });
 

@@ -31,7 +31,7 @@ import { AppUser } from "@/types/types";
 const items = [
   {
     title: "Partite",
-    url: "#",
+    url: "/dashboard/partite",
     icon: CalendarDays,
   },
   {

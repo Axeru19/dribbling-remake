@@ -11,8 +11,7 @@ export type AppUser = {
 };
 
 export type ReservationPostRequest = {
-  start_date?: string;
-  end_date?: string;
+  date?: Date;
   id_user?: number;
   id_field?: number;
   start_time?: string;
