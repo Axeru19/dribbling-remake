@@ -1,10 +1,12 @@
 "use client";
 
+import DeleteReservationButton from "@/components/deletereservation-button";
 import ReservationDetailForm from "@/components/ReservationDetailForm";
 import ReservationPaymentsTable from "@/components/ReservationPaymentsTable";
 import ReservationUserSelection from "@/components/ReservationUserSelection";
 import { Button } from "@/components/ui/button";
 import { useFields } from "@/context/FieldsContex";
+import { ReservationStatus } from "@/types/enums";
 import { fields, reservations, users, users_wallets } from "@prisma/client";
 import { Trash2, TrashIcon } from "lucide-react";
 import React, { use, useEffect, useState } from "react";
@@ -41,6 +43,31 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
       });
   }, []);
 
+  function deleteReservation() {
+    if (!reservation) return;
+
+    fetch(`/api/reservations/${reservation.id}/status`, {
+      method: "PUT",
+      body: JSON.stringify({
+        status: ReservationStatus.DELETED, // deleted status
+      }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error("Network response was not ok");
+        return res.json();
+      })
+      .then((data) => {
+        toast.success("Prenotazione eliminata con successo.");
+        window.location.href = "/dashboard/partite";
+      })
+      .catch(() => {
+        toast.error("Errore durante l'eliminazione della prenotazione.");
+      });
+  }
+
   return (
     <div className="w-full h-full flex flex-col gap-4 overflow-y-auto">
       <header>
@@ -52,9 +79,7 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
               ?.description
           }
           {reservation && (
-            <Button size="icon" variant="destructive" className="ml-4">
-              <Trash2 />
-            </Button>
+            <DeleteReservationButton deleteReservation={deleteReservation} />
           )}
         </h1>
         <h2 className="font-bold">
