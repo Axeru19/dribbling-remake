@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcrypt";
 import { AppUser } from "@/types/types";
+import { wallets } from "@prisma/client";
 
 export async function POST(request: NextRequest) {
   try {
@@ -17,6 +18,14 @@ export async function POST(request: NextRequest) {
         email: body.email,
         telephone: body.telephone,
         role_id: body.role_id || 1, // Default to role_id 1 if not provided
+      },
+    });
+
+    // create a wallet for the user
+    await prisma.wallets.create({
+      data: {
+        balance: 0,
+        id_user: user.id,
       },
     });
 

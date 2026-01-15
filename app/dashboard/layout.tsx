@@ -9,6 +9,8 @@ import { AppUser } from "@/types/types";
 import { authOptions } from "@/lib/auth";
 import Pathname from "@/components/pathname";
 import { Metadata } from "next";
+import { fields } from "@prisma/client";
+import { FieldsProvider } from "@/context/FieldsContex";
 
 export const metadata: Metadata = {
   title: {
@@ -30,6 +32,7 @@ export default async function layout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   const cookieStore = await cookies();
+  const host = process.env.NEXTAUTH_URL;
   const defaultOpen = cookieStore.get("sidebar_state")?.value === "true";
 
   // prendo la sessione
@@ -40,6 +43,11 @@ export default async function layout({
     // se non ho un utente loggato, reindirizzo al login
     redirect("/login");
   }
+
+  // get all the sport fields
+  const fields: fields[] = await fetch(host + "/api/fields/list", {
+    cache: "no-store",
+  }).then((res) => res.json());
 
   return (
     <SidebarProvider defaultOpen={defaultOpen}>
@@ -54,7 +62,9 @@ export default async function layout({
           <Pathname />
         </header>
 
-        <div className="p-6 w-full h-15/16">{children}</div>
+        <div className="p-6 w-full h-15/16">
+          <FieldsProvider value={fields}>{children}</FieldsProvider>
+        </div>
       </main>
     </SidebarProvider>
   );

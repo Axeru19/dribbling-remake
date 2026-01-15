@@ -107,12 +107,12 @@ function Field({
       </CardHeader>
       <CardFooter>
         <Button
+          type="button"
           variant="secondary"
           className={cn(
             "w-full cursor-pointer",
             field.status ? "bg-green-100" : "bg-red-100"
           )}
-          onClick={toggleFieldStatus}
         >
           {field.status ? "Attivo" : "Disattivo"}
         </Button>

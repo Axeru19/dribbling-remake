@@ -26,7 +26,6 @@ export async function POST(request: NextRequest) {
     const safeUsers = users.map((user) => ({
       ...user,
       user_id: user?.user_id!.toString(),
-      wallet_id: user?.wallet_id!.toString(),
       // 👈 evita l'errore di serializzazione
     }));
 
