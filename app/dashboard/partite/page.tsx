@@ -8,9 +8,17 @@ import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { DatePicker } from "@/components/DatePicker";
 import DayView from "./DayView";
 import Link from "next/link";
+import { useSwipeable } from "react-swipeable";
 
 export default function Page() {
   const [day, setDay] = useState<Date>(new Date());
+
+  const swipeHandlers = useSwipeable({
+    onSwipedLeft: () => setDay((day) => new Date(addDays(day, 1))),
+    onSwipedRight: () => setDay((day) => new Date(subDays(day, 1))),
+    preventScrollOnSwipe: true,
+    trackMouse: true,
+  });
 
   return (
     <div className="w-full h-full flex flex-col gap-6">
@@ -62,7 +70,7 @@ export default function Page() {
         </div>
       </header>
 
-      <DayView day={day} />
+      <DayView day={day} swipeHandlers={swipeHandlers} />
     </div>
   );
 }

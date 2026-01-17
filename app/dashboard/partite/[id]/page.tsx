@@ -96,9 +96,11 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
       </header>
 
       <div className="flex flex-col gap-10 md:gap-4 md:flex-row w-full h-full">
-        <div className="min-h-full flex-1">
-          {reservation && <ReservationDetailForm reservation={reservation} />}
-        </div>
+        {reservation && (
+          <div className="min-h-full flex-1">
+            <ReservationDetailForm reservation={reservation} />
+          </div>
+        )}
 
         {reservation && (
           <div className="min-h-full flex-1">

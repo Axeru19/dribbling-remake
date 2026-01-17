@@ -29,7 +29,13 @@ const timeslots = [
   "01:00",
 ];
 
-export default function DayView({ day }: { day: Date }) {
+export default function DayView({
+  day,
+  swipeHandlers,
+}: {
+  day: Date;
+  swipeHandlers: any;
+}) {
   const fields: fields[] = useFields().sort((a, b) => a.id - b.id);
   const [reservations, setReservations] = useState<view_reservations[]>([]);
 
@@ -62,7 +68,10 @@ export default function DayView({ day }: { day: Date }) {
   }, [day]);
 
   return (
-    <div className="w-full h-full overflow-y-auto">
+    <div
+      className="w-full h-full overflow-y-auto select-none"
+      {...swipeHandlers}
+    >
       <header
         className="grid gap-2 sticky top-0 z-50"
         style={{
