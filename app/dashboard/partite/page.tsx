@@ -16,8 +16,10 @@ export default function Page() {
   const swipeHandlers = useSwipeable({
     onSwipedLeft: () => setDay((day) => new Date(addDays(day, 1))),
     onSwipedRight: () => setDay((day) => new Date(subDays(day, 1))),
+    // scroll only on vertical swipes
     preventScrollOnSwipe: true,
     trackMouse: true,
+    trackTouch: true,
   });
 
   return (

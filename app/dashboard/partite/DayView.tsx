@@ -112,7 +112,7 @@ export default function DayView({
                     .startsWith(time.split(":")[0])
               );
 
-              if (!slot_reservations.length) return null;
+              if (!slot_reservations.length) return <div key={field.id}></div>;
 
               return (
                 <div
