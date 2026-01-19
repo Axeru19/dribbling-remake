@@ -37,7 +37,10 @@ export default function DeleteReservationButton({
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Annulla</AlertDialogCancel>
-          <AlertDialogAction onClick={deleteReservation}>
+          <AlertDialogAction
+            className="bg-destructive"
+            onClick={deleteReservation}
+          >
             Si, elimina
           </AlertDialogAction>
         </AlertDialogFooter>

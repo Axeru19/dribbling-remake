@@ -9,3 +9,8 @@ export enum ReservationStatus {
   REJECTED = 3,
   DELETED = 4,
 }
+
+export enum UserRole {
+  ADMIN = 2,
+  USER = 1,
+}

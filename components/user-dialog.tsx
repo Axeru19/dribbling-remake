@@ -19,7 +19,7 @@ import { Input } from "./ui/input";
 import { toast } from "sonner";
 import { users_wallets } from "@prisma/client";
 import { Separator } from "@/components/ui/separator";
-import { WalletUpdateType } from "@/types/enums";
+import { WalletUpdateType } from "@/lib/enums";
 
 const formSchema = z.object({
   name: z.string().min(1, "Il nome è obbligatorio"),
@@ -36,7 +36,7 @@ const formSchema = z.object({
       /* se non ho un numero comunico di inserire un valore numerico */
       {
         message: "Inserisci un importo valido per la ricarica",
-      }
+      },
     )
     .min(0, "L'importo della ricarica deve essere maggiore o uguale a 0")
     .optional(),
@@ -81,7 +81,7 @@ export default function UserDialog({
       })
       .catch((error) => {
         toast.error(
-          "Si è verificato un errore durante l'aggiornamento dell'utente."
+          "Si è verificato un errore durante l'aggiornamento dell'utente.",
         );
         // You can show an error message to the user here
       });
@@ -113,7 +113,7 @@ export default function UserDialog({
       })
       .catch((error) => {
         toast.error(
-          "Si è verificato un errore durante la ricarica del portafoglio."
+          "Si è verificato un errore durante la ricarica del portafoglio.",
         );
         // You can show an error message to the user here
       });

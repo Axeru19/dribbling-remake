@@ -36,7 +36,7 @@ export default function Pathname() {
                       className={isLast ? "font-semibold" : "text-gray-500"}
                       href={href}
                     >
-                      {segment}
+                      {segment.replace(/-/g, " ")}
                     </Link>
                   </BreadcrumbPage>
                 </BreadcrumbItem>

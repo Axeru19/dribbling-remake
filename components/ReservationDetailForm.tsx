@@ -19,6 +19,7 @@ import {
 import { Textarea } from "./ui/textarea";
 import { Button } from "./ui/button";
 import { toast } from "sonner";
+import { toLocalTimeDate } from "@/utils/localedate";
 
 const formSchema = z
   .object({
@@ -46,7 +47,7 @@ const formSchema = z
     {
       message: "L'orario di fine deve essere dopo l'orario di inizio",
       path: ["end_time"],
-    }
+    },
   );
 
 export default function ReservationDetailForm({
@@ -55,11 +56,6 @@ export default function ReservationDetailForm({
   reservation: reservations | null;
 }) {
   const fields: fields[] = useFields();
-
-  function toLocalTimeDate(dateStr: string, timeStr: string) {
-    const date = new Date(`${dateStr}T${timeStr}:00`);
-    return new Date(date.getTime() - date.getTimezoneOffset() * 60000);
-  }
 
   const form = reservation
     ? useForm<z.infer<typeof formSchema>>({

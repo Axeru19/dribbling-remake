@@ -10,6 +10,9 @@ import {
   Settings,
   Users,
   WalletCards,
+  PlusCircle,
+  List,
+  UserRoundPen,
 } from "lucide-react";
 import {
   SidebarContent,
@@ -27,8 +30,9 @@ import {
 import { signOut, useSession } from "next-auth/react";
 import LogoutButton from "./logout-button";
 import { AppUser } from "@/types/types";
+import { UserRole } from "@/lib/enums";
 
-const items = [
+const itemsAdmin = [
   {
     title: "Partite",
     url: "/dashboard/partite",
@@ -56,6 +60,29 @@ const items = [
   },
 ];
 
+const itemsUser = [
+  {
+    title: "Nuova prenotazione",
+    url: "/dashboard/nuova-prenotazione",
+    icon: PlusCircle,
+  },
+  {
+    title: "Le mie prenotazioni",
+    url: "/dashboard/le-mie-prenotazioni",
+    icon: List,
+  },
+  {
+    title: "Portafoglio",
+    url: "/dashboard/portafoglio",
+    icon: WalletCards,
+  },
+  {
+    title: "Profilo",
+    url: "/dashboard/profilo",
+    icon: UserRoundPen,
+  },
+];
+
 export default async function AppSidebar({
   user,
 }: Readonly<{ user: AppUser }>) {
@@ -80,16 +107,29 @@ export default async function AppSidebar({
           <SidebarGroupLabel>Funzionalità</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {items.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <a href={item.url}>
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </a>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+              {user.role_id == UserRole.ADMIN &&
+                itemsAdmin.map((item) => (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton asChild>
+                      <a href={item.url}>
+                        <item.icon />
+                        <span>{item.title}</span>
+                      </a>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
+
+              {user.role_id == UserRole.USER &&
+                itemsUser.map((item) => (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton asChild>
+                      <a href={item.url}>
+                        <item.icon />
+                        <span>{item.title}</span>
+                      </a>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>

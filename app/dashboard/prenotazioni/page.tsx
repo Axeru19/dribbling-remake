@@ -18,7 +18,7 @@ import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
 import ReservationActionDialog from "@/components/ReservationActionDialog";
 import { ReservationPostRequest } from "@/types/types";
-import { ReservationStatus } from "@/types/enums";
+import { ReservationStatus } from "@/lib/enums";
 import { number } from "zod";
 
 const body: ReservationPostRequest = { id_status: ReservationStatus.INCOMING };

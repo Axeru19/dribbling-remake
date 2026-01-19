@@ -6,7 +6,7 @@ import ReservationPaymentsTable from "@/components/ReservationPaymentsTable";
 import ReservationUserSelection from "@/components/ReservationUserSelection";
 import { Button } from "@/components/ui/button";
 import { useFields } from "@/context/FieldsContex";
-import { ReservationStatus } from "@/types/enums";
+import { ReservationStatus } from "@/lib/enums";
 import { fields, reservations, users, users_wallets } from "@prisma/client";
 import { Trash2, TrashIcon } from "lucide-react";
 import React, { use, useEffect, useState } from "react";
@@ -16,7 +16,7 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const [reservation, setReservation] = useState<reservations | null>(null);
   const [reservationUser, setReservationUser] = useState<users_wallets | null>(
-    null
+    null,
   );
   const fields: fields[] = useFields();
 

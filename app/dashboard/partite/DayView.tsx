@@ -6,28 +6,10 @@ import "./style.css";
 import { toast } from "sonner";
 import { ReservationPostRequest } from "@/types/types";
 import Link from "next/link";
-import { ReservationStatus } from "@/types/enums";
+import { ReservationStatus } from "@/lib/enums";
+import { Timeslots } from "@/lib/constants";
 
-const timeslots = [
-  "08:00",
-  "09:00",
-  "10:00",
-  "11:00",
-  "12:00",
-  "13:00",
-  "14:00",
-  "15:00",
-  "16:00",
-  "17:00",
-  "18:00",
-  "19:00",
-  "20:00",
-  "21:00",
-  "22:00",
-  "23:00",
-  "00:00",
-  "01:00",
-];
+const timeslots: string[] = Timeslots;
 
 export default function DayView({
   day,
@@ -62,8 +44,8 @@ export default function DayView({
       })
       .catch((err) =>
         toast.error(
-          "Errore durante il caricamento delle prenotazioni: " + err.message
-        )
+          "Errore durante il caricamento delle prenotazioni: " + err.message,
+        ),
       );
   }, [day]);
 
@@ -109,7 +91,7 @@ export default function DayView({
                   r.description === field.description &&
                   String(r.start_time)
                     .split("T")[1]
-                    .startsWith(time.split(":")[0])
+                    .startsWith(time.split(":")[0]),
               );
 
               if (!slot_reservations.length) return <div key={field.id}></div>;

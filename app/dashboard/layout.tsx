@@ -11,6 +11,8 @@ import Pathname from "@/components/pathname";
 import { Metadata } from "next";
 import { fields } from "@prisma/client";
 import { FieldsProvider } from "@/context/FieldsContex";
+import { SessionProvider } from "next-auth/react";
+import { SessionProviderWrapper } from "@/context/SessoionContex";
 
 export const metadata: Metadata = {
   title: {
@@ -63,7 +65,9 @@ export default async function layout({
         </header>
 
         <div className="p-6 w-full h-15/16">
-          <FieldsProvider value={fields}>{children}</FieldsProvider>
+          <SessionProviderWrapper>
+            <FieldsProvider value={fields}>{children}</FieldsProvider>
+          </SessionProviderWrapper>
         </div>
       </main>
     </SidebarProvider>

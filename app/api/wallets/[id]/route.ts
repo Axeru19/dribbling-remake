@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { WalletUpdateType } from "@/types/enums";
+import { WalletUpdateType } from "@/lib/enums";
 
 interface WalletUpdateRequest {
   type: WalletUpdateType;
@@ -9,7 +9,7 @@ interface WalletUpdateRequest {
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   const { id } = await params;
   const walletUpdateRequest: WalletUpdateRequest = await request.json();
@@ -22,7 +22,7 @@ export async function PUT(
   if (!wallet) {
     return NextResponse.json(
       { error: "Portafoglio non trovato" },
-      { status: 404 }
+      { status: 404 },
     );
   }
 
@@ -33,7 +33,7 @@ export async function PUT(
   ) {
     return NextResponse.json(
       { error: "Tipo di aggiornamento non valido" },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -60,13 +60,13 @@ export async function PUT(
 
     return NextResponse.json(
       { message: "Portafoglio aggiornato con successo" },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     console.error("Errore durante l'aggiornamento del portafoglio:", error);
     return NextResponse.json(
       { error: "Errore durante l'aggiornamento del portafoglio" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

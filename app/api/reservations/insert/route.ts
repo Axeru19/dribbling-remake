@@ -9,7 +9,7 @@ export async function POST(req: NextRequest) {
 
   const today = new Date();
   const start_time = new Date(
-    today.getTime() - today.getTimezoneOffset() * 60000
+    today.getTime() - today.getTimezoneOffset() * 60000,
   );
   const end_time = new Date(start_time.getTime() + 60 * 60 * 1000); // add 1 hour
 
