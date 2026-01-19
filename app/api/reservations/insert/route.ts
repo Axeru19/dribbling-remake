@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import { ReservationStatus } from "@/types/enums";
+import { ReservationStatus } from "@/lib/enums";
 import { normalizeIds } from "@/utils/normalizeIds";
 import { reservations } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";

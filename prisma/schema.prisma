@@ -110,6 +110,7 @@ model view_reservations {
   email       String?
   nickname    String?
   description String?
+  mixed       Boolean?
 
   @@map("view_reservations")
 }
