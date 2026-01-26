@@ -125,15 +125,15 @@ function ReservationIncoming({
           </span>
           <span className="flex gap-2 items-center">
             <Clock10Icon size={16} />{" "}
-            {new Date(reservation.start_time).toLocaleTimeString("it-IT", {
-              hour: "2-digit",
-              minute: "2-digit",
-            })}{" "}
+            {new Date(reservation.start_time)
+              .toISOString()
+              .split("T")[1]
+              .substring(0, 5)}{" "}
             -{" "}
-            {new Date(reservation.end_time).toLocaleTimeString("it-IT", {
-              hour: "2-digit",
-              minute: "2-digit",
-            })}
+            {new Date(reservation.end_time)
+              .toISOString()
+              .split("T")[1]
+              .substring(0, 5)}
           </span>
 
           <div className="col-span-2 mt-2 w-full">
