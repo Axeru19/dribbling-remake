@@ -79,7 +79,9 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
               ?.description
           }
           {reservation && (
-            <DeleteReservationButton deleteReservation={deleteReservation} />
+            <span className="ml-4">
+              <DeleteReservationButton deleteReservation={deleteReservation} />
+            </span>
           )}
         </h1>
         <h2 className="font-bold">

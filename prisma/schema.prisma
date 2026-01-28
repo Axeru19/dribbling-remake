@@ -111,6 +111,7 @@ model view_reservations {
   nickname    String?
   description String?
   mixed       Boolean?
+  id_status   Int
 
   @@map("view_reservations")
 }

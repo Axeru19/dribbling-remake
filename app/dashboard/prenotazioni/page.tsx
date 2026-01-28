@@ -52,7 +52,7 @@ export default function Page() {
 
   return (
     <div
-      className="ooverflow-y-auto gap-6
+      className="overflow-y-auto gap-6
          flex flex-col lg:grid lg:grid-cols-[repeat(auto-fit,_minmax(300px,_1fr))]"
     >
       {reservations.length !== 0 &&

@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
   // prendo tutti gli id delle prenotazioni trovate
   // e li uso per cercare nella view_reservations
   const reservationsIds = reservationsRaw.map((reservation) =>
-    Number(reservation.id)
+    Number(reservation.id),
   );
 
   const reservations: view_reservations[] =
@@ -38,7 +38,7 @@ export async function POST(request: NextRequest) {
       },
 
       orderBy: {
-        date: "asc",
+        id: "desc",
       },
     });
   return NextResponse.json(normalizeIds(reservations));

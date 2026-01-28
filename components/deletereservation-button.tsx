@@ -21,7 +21,7 @@ export default function DeleteReservationButton({
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button size="icon" variant="destructive" className="ml-4">
+        <Button size="icon" variant="destructive">
           <Trash2 />
         </Button>
       </AlertDialogTrigger>
