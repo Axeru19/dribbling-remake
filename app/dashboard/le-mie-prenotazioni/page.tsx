@@ -80,7 +80,7 @@ export default function page() {
       {reservations.length > 0 &&
         reservations.map((reservation) => {
           return (
-            <Card key={reservation.id} className="flex-1 basis-1/3">
+            <Card key={reservation.id} className="flex-1 basis-1/3 h-fit">
               <CardHeader>
                 <CardTitle>
                   {format(reservation.date!, "EEE, dd MMM yyyy", {
