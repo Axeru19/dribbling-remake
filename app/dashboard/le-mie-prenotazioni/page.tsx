@@ -11,8 +11,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { useFields } from "@/context/FieldsContex";
-import { authOptions } from "@/lib/auth";
 import { ReservationStatus, ReservationStatusColor } from "@/lib/enums";
 import { prisma } from "@/lib/prisma";
 import { AppUser } from "@/types/types";
