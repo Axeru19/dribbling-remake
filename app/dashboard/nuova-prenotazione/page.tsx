@@ -14,7 +14,7 @@ import React, { useState, useEffect, use } from "react";
 import { toast } from "sonner";
 
 export default function NuovaPrenotazione() {
-  const fields = useFields() as fields[];
+  const fields = useFields().filter((f) => f.status) as fields[];
   const { data: session, status } = useSession();
   const [slotsAvailable, setSlotsAvailable] = useState<string[]>([]);
 
