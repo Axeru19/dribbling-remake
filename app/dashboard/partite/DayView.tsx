@@ -23,6 +23,12 @@ const CALENDAR_START_HOUR = 8; // 08:00
 /** Larghezza minima di ciascuna colonna campo (usata per il layout orizzontale). */
 const MIN_COL_WIDTH = 0; // px — 0 = colonne 1fr, nessun overflow orizzontale su mobile
 
+/**
+ * Larghezza della colonna orari (px).
+ * Le label vengono posizionate in absolute per non interferire con le linee.
+ */
+const TIME_COL_WIDTH = 44; // px
+
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
 /**
@@ -166,7 +172,7 @@ export default function DayView({ day, swipeHandlers }: DayViewProps) {
          */}
         <div
           className="flex sticky top-0 z-20"
-          style={{ paddingLeft: 48 }} // allinea con la colonna orari
+          style={{ paddingLeft: TIME_COL_WIDTH }} // allinea con la colonna orari
         >
           {fields.map((field) => (
             <div
@@ -183,15 +189,31 @@ export default function DayView({ day, swipeHandlers }: DayViewProps) {
 
         {/* ══ CORPO DEL CALENDARIO ════════════════════════════════════════ */}
         <div className="flex">
-          {/* ── Colonna etichette orarie ──────────────────────────────────── */}
-          <div className="shrink-0 w-12 flex flex-col">
+          {/*
+           * ── Colonna etichette orarie ──────────────────────────────────
+           *
+           * Le label vengono posizionate in `absolute` all'interno di un
+           * container `relative` alto HOUR_HEIGHT.
+           * In questo modo il `border-t` delle linee NON passa per la
+           * colonna label (è nell'area campi), eliminando la sovrapposizione.
+           * La larghezza è TIME_COL_WIDTH px per dare spazio sufficiente
+           * anche su schermi piccoli, centrando meglio il calendario mobile.
+           */}
+          <div
+            className="shrink-0 flex flex-col"
+            style={{ width: TIME_COL_WIDTH }}
+          >
             {Timeslots.map((time) => (
               <div
                 key={time}
-                className="flex items-start justify-end pr-2 border-t border-border/50"
+                className="relative"
                 style={{ height: HOUR_HEIGHT }}
               >
-                <span className="text-[10px] text-muted-foreground font-medium -mt-[7px] select-none tabular-nums">
+                {/* Label posizionata in absolute: non rompe il flusso del border */}
+                <span
+                  className="absolute right-2 text-[10px] text-muted-foreground/70 font-medium select-none tabular-nums leading-none"
+                  style={{ top: -6 }} // centrata sul bordo della riga
+                >
                   {time}
                 </span>
               </div>

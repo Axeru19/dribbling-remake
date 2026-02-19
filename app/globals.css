@@ -142,3 +142,27 @@
 button {
   cursor: pointer;
 }
+
+/* PWA - Safe Area Support (iOS notch / Dynamic Island) */
+:root {
+  --safe-area-top: env(safe-area-inset-top, 0px);
+  --safe-area-right: env(safe-area-inset-right, 0px);
+  --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-area-left: env(safe-area-inset-left, 0px);
+}
+
+/* Assicura che il body non venga tagliato dal notch */
+body {
+  padding-top: env(safe-area-inset-top);
+  padding-right: env(safe-area-inset-right);
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-left: env(safe-area-inset-left);
+}
+
+/* In modalità standalone (PWA installata) rimuove la barra di navigazione del browser */
+@media (display-mode: standalone) {
+  body {
+    /* Nessuna scroll oltre la viewport */
+    overscroll-behavior: none;
+  }
+}
