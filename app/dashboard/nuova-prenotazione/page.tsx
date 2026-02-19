@@ -289,7 +289,7 @@ export default function NuovaPrenotazione() {
             Nuova Prenotazione
           </h1>
           <p className="text-sm text-muted-foreground">
-            Prenota la tua prossima partita.
+            Prenota il tuo campo sportivo in pochi semplici passi
           </p>
         </div>
 
