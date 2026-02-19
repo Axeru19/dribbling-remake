@@ -15,9 +15,11 @@ import {
 export function DatePicker({
   date,
   setDate,
+  trigger,
 }: {
   date: Date | null;
   setDate: (date: Date | null) => void;
+  trigger?: React.ReactNode;
 }) {
   const [open, setOpen] = React.useState(false);
 
@@ -25,15 +27,19 @@ export function DatePicker({
     <div className="flex flex-col gap-3">
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
-          <Button
-            variant="outline"
-            id="date"
-            size={"sm"}
-            className="w-fit justify-between font-normal"
-          >
-            {date ? date.toLocaleDateString() : "Select date"}
-            <ChevronDownIcon />
-          </Button>
+          {trigger ? (
+            trigger
+          ) : (
+            <Button
+              variant="outline"
+              id="date"
+              size={"sm"}
+              className="w-fit justify-between font-normal"
+            >
+              {date ? date.toLocaleDateString() : "Select date"}
+              <ChevronDownIcon />
+            </Button>
+          )}
         </PopoverTrigger>
         <PopoverContent className="w-auto overflow-hidden p-0" align="start">
           <Calendar

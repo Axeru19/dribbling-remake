@@ -49,8 +49,8 @@ export default function ReservationUserSelection({
       userSearch.length > 0 && userList && userList.length === 0
         ? userSearch
         : user?.user_id
-        ? Number(user!.user_id)
-        : 0;
+          ? Number(user!.user_id)
+          : 0;
 
     fetch("/api/reservations/insert", {
       method: "POST",
@@ -101,7 +101,7 @@ export default function ReservationUserSelection({
             key={u.user_id}
             className={cn(
               "text-sm w-full md:w-1/2 border cursor-pointer hover:bg-gray-200 text-center rounded-md p-3",
-              Number(u.user_id) === Number(user?.user_id) ? "bg-gray-200" : ""
+              Number(u.user_id) === Number(user?.user_id) ? "bg-gray-200" : "",
             )}
             onClick={() => setUser(u)}
           >

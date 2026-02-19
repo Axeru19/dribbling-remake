@@ -1,87 +1,173 @@
+"use client";
+
 import React from "react";
 import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
-  AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { Separator } from "@/components/ui/separator";
 import { view_reservations } from "@prisma/client";
-import { cn } from "@/lib/utils";
-import { Award, Calendar, Clock10Icon, User } from "lucide-react";
+import {
+  User,
+  Layers,
+  Calendar,
+  Clock,
+  Users2,
+  CheckCircle2,
+  XCircle,
+} from "lucide-react";
 
+// ─── Types ────────────────────────────────────────────────────────────────────
+
+interface ReservationActionDialogProps {
+  /** "conferma" = voglio approvare la prenotazione; "rifiuta" = la rifiuto */
+  type: "conferma" | "rifiuta";
+  children: React.ReactNode;
+  reservation: view_reservations;
+  onConfirm?: () => void;
+}
+
+// ─── SummaryRow ───────────────────────────────────────────────────────────────
+
+interface SummaryRowProps {
+  icon: React.ElementType;
+  label: string;
+  value: string;
+}
+
+/**
+ * Riga del riepilogo nel dialog di conferma/rifiuto.
+ * Coerente col design del resto dell'app.
+ */
+function SummaryRow({ icon: Icon, label, value }: SummaryRowProps) {
+  return (
+    <div className="flex items-center gap-3">
+      <div className="p-1.5 rounded-md bg-accent text-muted-foreground shrink-0">
+        <Icon className="w-3.5 h-3.5" />
+      </div>
+      <div className="flex-1 min-w-0">
+        <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-wide leading-none mb-0.5">
+          {label}
+        </p>
+        <p className="text-sm font-medium text-foreground truncate">{value}</p>
+      </div>
+    </div>
+  );
+}
+
+// ─── Component ────────────────────────────────────────────────────────────────
+
+/**
+ * Dialog di conferma per le azioni admin su una prenotazione.
+ * Mostra un riepilogo visivo della prenotazione e permette di confermare
+ * o annullare l'azione (conferma/rifiuto).
+ *
+ * Props invariate rispetto alla versione originale per compatibilità
+ * con tutti i punti di utilizzo esistenti.
+ */
 export default function ReservationActionDialog({
   type,
   children,
   reservation,
   onConfirm,
-}: {
-  type: "conferma" | "rifiuta";
-  children: React.ReactNode;
-  reservation: view_reservations;
-  onConfirm?: () => void;
-}) {
+}: ReservationActionDialogProps) {
+  const isConfirm = type === "conferma";
+
+  // Dati formattati per il riepilogo
+  const dateLabel = new Date(reservation.date).toLocaleDateString("it-IT", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+
+  const startLabel = new Date(reservation.start_time).toLocaleTimeString(
+    "it-IT",
+    { hour: "2-digit", minute: "2-digit" },
+  );
+  const endLabel = new Date(reservation.end_time).toLocaleTimeString("it-IT", {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
-      <AlertDialogContent>
+
+      <AlertDialogContent className="max-w-sm sm:max-w-md">
         <AlertDialogHeader>
-          <AlertDialogTitle>
-            {type === "conferma"
-              ? "Conferma Prenotazione"
-              : "Rifiuta Prenotazione"}
-          </AlertDialogTitle>
-          <AlertDialogDescription>
-            {type === "conferma"
-              ? "Sei sicuro di voler confermare questa prenotazione? La prenotazione sarà visibile nella tua lista di prenotazioni."
-              : "Sei sicuro di voler rifiutare questa prenotazione? La prenotazione non sarà più visibile nella tua lista di prenotazioni."}
-          </AlertDialogDescription>
+          {/* Icona + titolo colorati in base all'azione */}
+          <div className="flex items-center gap-3 mb-1">
+            <div
+              className={`p-2 rounded-lg shrink-0 ${
+                isConfirm
+                  ? "bg-green-100 text-green-600 dark:bg-green-950/40 dark:text-green-400"
+                  : "bg-red-100 text-red-600 dark:bg-red-950/40 dark:text-red-400"
+              }`}
+            >
+              {isConfirm ? (
+                <CheckCircle2 className="w-5 h-5" />
+              ) : (
+                <XCircle className="w-5 h-5" />
+              )}
+            </div>
+            <AlertDialogTitle className="text-base">
+              {isConfirm ? "Conferma prenotazione" : "Rifiuta prenotazione"}
+            </AlertDialogTitle>
+          </div>
+
+          {/* Messaggio contestuale */}
+          <p className="text-sm text-muted-foreground">
+            {isConfirm
+              ? "Stai per confermare questa prenotazione. L'utente verrà notificato."
+              : "Stai per rifiutare questa prenotazione. L'azione non può essere annullata."}
+          </p>
         </AlertDialogHeader>
 
-        <div className="grid mb-3 grid-cols-2 gap-2 place-items-center lg:place-items-start">
-          <span className="flex items-center gap-2">
-            <User size={16} /> {reservation.name} {reservation.surname}
-          </span>
+        {/* ── Riepilogo prenotazione ─────────────────────────────────── */}
+        <div className="rounded-xl border bg-accent/20 p-4 flex flex-col gap-3 my-1">
+          <SummaryRow
+            icon={User}
+            label="Cliente"
+            value={`${reservation.name ?? ""} ${reservation.surname ?? ""} (@${reservation.nickname ?? ""})`}
+          />
 
-          <span className="flex items-center gap-2">
-            <Award size={16} />
-            {reservation.description}
-          </span>
+          <SummaryRow
+            icon={Layers}
+            label="Campo"
+            value={reservation.description ?? "—"}
+          />
 
-          <span className="flex items-center gap-2">
-            <Calendar size={16} />
-            {new Date(reservation.date).toLocaleDateString("it-IT", {
-              day: "2-digit",
-              month: "2-digit",
-              year: "numeric",
-            })}
-          </span>
+          <SummaryRow icon={Calendar} label="Data" value={dateLabel} />
 
-          <span className="flex gap-2 items-center">
-            <Clock10Icon size={16} />
-            {new Date(reservation.start_time).toLocaleTimeString("it-IT", {
-              hour: "2-digit",
-              minute: "2-digit",
-            }) +
-              " - " +
-              new Date(reservation.end_time).toLocaleTimeString("it-IT", {
-                hour: "2-digit",
-                minute: "2-digit",
-              })}
-          </span>
+          <SummaryRow
+            icon={Clock}
+            label="Orario"
+            value={`${startLabel} – ${endLabel}`}
+          />
+
+          <SummaryRow
+            icon={Users2}
+            label="Formato"
+            value={reservation.mixed ? "Squadre miste" : "Squadre omogenee"}
+          />
         </div>
 
         <AlertDialogFooter>
           <AlertDialogCancel>Annulla</AlertDialogCancel>
           <AlertDialogAction
             onClick={onConfirm}
-            className={type === "rifiuta" ? "bg-destructive" : ""}
+            className={
+              isConfirm ? "" : "bg-destructive hover:bg-destructive/90"
+            }
           >
-            {type === "conferma" ? "Conferma" : "Rifiuta"}
+            {isConfirm ? "Sì, conferma" : "Sì, rifiuta"}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
