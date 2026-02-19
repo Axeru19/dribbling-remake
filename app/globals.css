@@ -142,31 +142,3 @@
 button {
   cursor: pointer;
 }
-
-/* ─── PWA / Mobile Viewport Fix ─────────────────────────────────────────── */
-
-/* Evita che html e body crescano oltre il viewport */
-html {
-  height: 100%;
-  overflow: hidden;
-}
-
-body {
-  height: 100%;
-  overflow: hidden;
-}
-
-/* CSS vars per safe area disponibili ovunque nell'app */
-:root {
-  --safe-area-top: env(safe-area-inset-top, 0px);
-  --safe-area-right: env(safe-area-inset-right, 0px);
-  --safe-area-bottom: env(safe-area-inset-bottom, 0px);
-  --safe-area-left: env(safe-area-inset-left, 0px);
-}
-
-/* In modalità standalone (PWA installata) */
-@media (display-mode: standalone) {
-  body {
-    overscroll-behavior: none;
-  }
-}
