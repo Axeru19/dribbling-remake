@@ -55,8 +55,13 @@ export default async function layout({
     <SessionProviderWrapper>
       <SidebarProvider defaultOpen={defaultOpen}>
         <AppSidebar user={user} />
-        <main className="w-full h-dvh">
-          <header className="flex h-1/16 gap-2 p-3 items-center w-full border-b">
+        <main className="flex flex-col w-full h-dvh overflow-hidden">
+          <header
+            className="flex shrink-0 gap-2 p-3 items-center w-full border-b"
+            style={{
+              paddingTop: "calc(0.75rem + env(safe-area-inset-top, 0px))",
+            }}
+          >
             <SidebarTrigger />
             <Separator
               orientation="vertical"
@@ -65,7 +70,7 @@ export default async function layout({
             <Pathname />
           </header>
 
-          <div className="p-6 w-full h-15/16">
+          <div className="flex-1 overflow-auto p-6 w-full">
             <FieldsProvider value={fields}>{children}</FieldsProvider>
           </div>
         </main>
