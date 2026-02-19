@@ -52,24 +52,24 @@ export default async function layout({
   }).then((res) => res.json());
 
   return (
-    <SidebarProvider defaultOpen={defaultOpen}>
-      <AppSidebar user={user} />
-      <main className="w-full h-dvh">
-        <header className="flex h-1/16 gap-2 p-3 items-center w-full border-b">
-          <SidebarTrigger />
-          <Separator
-            orientation="vertical"
-            className="mx-2 font-bold data-[orientation=vertical]:h-6"
-          />
-          <Pathname />
-        </header>
+    <SessionProviderWrapper>
+      <SidebarProvider defaultOpen={defaultOpen}>
+        <AppSidebar user={user} />
+        <main className="w-full h-dvh">
+          <header className="flex h-1/16 gap-2 p-3 items-center w-full border-b">
+            <SidebarTrigger />
+            <Separator
+              orientation="vertical"
+              className="mx-2 font-bold data-[orientation=vertical]:h-6"
+            />
+            <Pathname />
+          </header>
 
-        <div className="p-6 w-full h-15/16">
-          <SessionProviderWrapper>
+          <div className="p-6 w-full h-15/16">
             <FieldsProvider value={fields}>{children}</FieldsProvider>
-          </SessionProviderWrapper>
-        </div>
-      </main>
-    </SidebarProvider>
+          </div>
+        </main>
+      </SidebarProvider>
+    </SessionProviderWrapper>
   );
 }

@@ -50,7 +50,7 @@ export const authOptions: AuthOptions = {
     signIn: "/login", // redirect automatico se necessario
   },
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger, session }) {
       if (user) {
         token.id = user.id;
         token.name = user.name;
@@ -59,6 +59,14 @@ export const authOptions: AuthOptions = {
         token.nickname = user.nickname;
         token.telephone = user.telephone;
         token.role_id = user.role_id;
+      }
+      // Aggiorno il token quando il client chiama update()
+      if (trigger === "update" && session) {
+        token.name = session.name ?? token.name;
+        token.surname = session.surname ?? token.surname;
+        token.email = session.email ?? token.email;
+        token.nickname = session.nickname ?? token.nickname;
+        token.telephone = session.telephone ?? token.telephone;
       }
       return token;
     },

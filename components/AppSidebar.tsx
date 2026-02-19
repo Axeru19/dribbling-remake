@@ -31,6 +31,7 @@ import { signOut, useSession } from "next-auth/react";
 import LogoutButton from "./logout-button";
 import { AppUser } from "@/types/types";
 import { UserRole } from "@/lib/enums";
+import SidebarUserInfo from "./SidebarUserInfo";
 
 const itemsAdmin = [
   {
@@ -139,14 +140,7 @@ export default async function AppSidebar({
           <SidebarMenuItem>
             <LogoutButton />
 
-            <SidebarMenuButton className="mt-2 h-fit" size={"lg"}>
-              <div className="flex flex-col">
-                <span className="font-semibold">
-                  {user.name + " " + user.surname}
-                </span>
-                <span className="text-gray-500 text-xs">@{user.nickname}</span>
-              </div>
-            </SidebarMenuButton>
+            <SidebarUserInfo />
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarFooter>

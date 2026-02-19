@@ -23,8 +23,6 @@ export async function PUT(
     // Recupero i dati dal corpo della richiesta
     const user: AppUser = await req.json();
 
-    // se mi è stata inviata la password, la crittografo
-
     const dataUpdate: Partial<users> = {
       name: user.name!,
       surname: user.surname!,

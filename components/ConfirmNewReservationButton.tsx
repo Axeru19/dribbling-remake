@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -12,39 +12,59 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Button } from "./ui/button";
-import { Trash2 } from "lucide-react";
-import { fields, reservations } from "@prisma/client";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import {
+  CalendarDays,
+  Clock,
+  Layers,
+  Users2,
+  FileText,
+  CalendarCheck,
+} from "lucide-react";
+import { reservations, fields } from "@prisma/client";
 import { useFields } from "@/context/FieldsContex";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { normalizeIds } from "@/utils/normalizeIds";
-import { date } from "zod";
+
+// ─── Types ────────────────────────────────────────────────────────────────────
+
+interface ConfirmNewReservationButtonProps {
+  /**
+   * La prenotazione costruita dal form. Sarà null se il form non è
+   * ancora completo (campo, data o orario mancanti): in quel caso
+   * il pulsante mostra lo stato delle selezioni mancanti.
+   */
+  reservation: Omit<reservations, "id"> | null;
+}
+
+// ─── Componente ───────────────────────────────────────────────────────────────
 
 export default function ConfirmNewReservationButton({
   reservation,
-}: {
-  reservation: Omit<reservations, "id">;
-}) {
-  const fields = useFields() as fields[];
+}: ConfirmNewReservationButtonProps) {
+  const allFields = useFields() as fields[];
   const router = useRouter();
+  const [sending, setSending] = useState(false);
 
+  /** Invia la prenotazione al backend. */
   function sendReservation() {
     if (!reservation) return;
 
-    const reservationToSend = {
+    setSending(true);
+
+    // Normalizza i timestamp in UTC locale prima di serializzare
+    const payload = {
       ...reservation,
-      // convert to local timezone
       date: new Date(
         reservation.date!.getTime() -
           reservation.date!.getTimezoneOffset() * 60000,
       ),
-
       start_time: new Date(
         reservation.start_time!.getTime() -
           reservation.start_time!.getTimezoneOffset() * 60000,
       ),
-
       end_time: new Date(
         reservation.end_time!.getTime() -
           reservation.end_time!.getTimezoneOffset() * 60000,
@@ -53,98 +73,168 @@ export default function ConfirmNewReservationButton({
 
     fetch("/api/reservations/send", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(normalizeIds(reservationToSend)),
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(normalizeIds(payload)),
     })
       .then((res) => {
-        if (!res.ok) {
+        if (!res.ok)
           throw new Error("Errore durante l'invio della prenotazione");
-        }
         return res.json();
       })
       .then(() => {
         toast.success("Prenotazione inviata con successo!");
-        // Optionally, you can add more logic here, like redirecting the user
         router.push("/dashboard/le-mie-prenotazioni");
       })
-      .catch((err) => {
+      .catch((err: Error) => {
         toast.error(
           err.message || "Errore durante la creazione della prenotazione",
         );
-      });
+      })
+      .finally(() => setSending(false));
   }
 
+  // Dati da mostrare nel dialog di riepilogo
+  const fieldName =
+    allFields.find((f) => f.id === reservation?.id_field)?.description ?? "—";
+  const dateLabel =
+    reservation?.date?.toLocaleDateString("it-IT", {
+      weekday: "long",
+      day: "numeric",
+      month: "long",
+    }) ?? "—";
+  const startLabel =
+    reservation?.start_time?.toTimeString().substring(0, 5) ?? "—";
+  const endLabel = reservation?.end_time?.toTimeString().substring(0, 5) ?? "—";
+
+  // Il pulsante è disabilitato finché il form non è completo
+  const isDisabled = reservation === null;
+
   return (
-    <div className="w-full md:w-fit ml-auto mt-auto">
-      <AlertDialog>
-        <AlertDialogTrigger asChild>
-          <Button className="w-full">Conferma Prenotazione</Button>
-        </AlertDialogTrigger>
-        <AlertDialogContent>
+    <AlertDialog>
+      <AlertDialogTrigger asChild>
+        <Button
+          disabled={isDisabled}
+          className={[
+            "w-full gap-2 h-10 px-6 font-semibold transition-all duration-200",
+            isDisabled
+              ? "opacity-50 cursor-not-allowed"
+              : "shadow-md hover:shadow-lg active:scale-[0.98]",
+          ].join(" ")}
+        >
+          <CalendarCheck className="w-4 h-4 shrink-0" />
+          Conferma prenotazione
+        </Button>
+      </AlertDialogTrigger>
+
+      {/* Dialog di riepilogo — visibile solo se il form è completo */}
+      {reservation && (
+        <AlertDialogContent className="max-w-md">
           <AlertDialogHeader>
-            <AlertDialogTitle>Confermi la prenotazione?</AlertDialogTitle>
-            <AlertDialogDescription>
-              <span className="flex flex-col gap-2">
-                <span className="font-bold">Riepilogo</span>
-                <span className="flex justify-center flex-wrap gap-8 gap-y-3">
-                  <FormFiedlDescription
-                    label="campo"
+            <AlertDialogTitle className="flex items-center gap-2 text-lg">
+              <CalendarCheck className="w-5 h-5 text-primary" />
+              Confermi la prenotazione?
+            </AlertDialogTitle>
+            <AlertDialogDescription asChild>
+              {/* Riepilogo visivo coerente con il design della pagina */}
+              <div className="flex flex-col gap-4 pt-1">
+                <p className="text-sm text-muted-foreground">
+                  Controlla i dati prima di confermare. Potrai annullare entro
+                  2h dall&apos;appuntamento.
+                </p>
+
+                <div className="rounded-xl border bg-accent/30 p-4 flex flex-col gap-3">
+                  {/* Campo */}
+                  <SummaryRow icon={Layers} label="Campo" value={fieldName} />
+
+                  {/* Data */}
+                  <SummaryRow
+                    icon={CalendarDays}
+                    label="Giorno"
+                    value={dateLabel}
+                  />
+
+                  {/* Orario */}
+                  <SummaryRow
+                    icon={Clock}
+                    label="Orario"
+                    value={`${startLabel} – ${endLabel}`}
+                  />
+
+                  {/* Squadre miste */}
+                  <SummaryRow
+                    icon={Users2}
+                    label="Squadre miste"
                     value={
-                      fields.find((field) => field.id === reservation.id_field)
-                        ?.description || ""
+                      reservation.mixed ? (
+                        <Badge
+                          variant="secondary"
+                          className="text-xs font-medium"
+                        >
+                          Sì
+                        </Badge>
+                      ) : (
+                        <span className="text-muted-foreground text-sm">
+                          No
+                        </span>
+                      )
                     }
                   />
-                  <FormFiedlDescription
-                    label="Giorno"
-                    value={`${reservation.date?.toLocaleDateString("it-IT")}`}
-                  />
-                  <FormFiedlDescription
-                    label="ora inizio"
-                    value={`${reservation.start_time?.toTimeString().substring(0, 5)}`}
-                  />
-                  <FormFiedlDescription
-                    label="ora fine"
-                    value={`${reservation.end_time?.toTimeString().substring(0, 5)}`}
-                  />
 
-                  <FormFiedlDescription
-                    label="Squadre miste"
-                    value={`${reservation.mixed ? "Sì" : "No"}`}
-                  />
-
-                  <FormFiedlDescription
-                    label="note"
-                    value={`${reservation.notes || "Nessuna"}`}
-                  />
-                </span>
-              </span>
+                  {/* Note (solo se presenti) */}
+                  {reservation.notes && (
+                    <SummaryRow
+                      icon={FileText}
+                      label="Note"
+                      value={reservation.notes}
+                    />
+                  )}
+                </div>
+              </div>
             </AlertDialogDescription>
           </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Annulla</AlertDialogCancel>
-            <AlertDialogAction className="bg-success" onClick={sendReservation}>
-              Conferma
+
+          <AlertDialogFooter className="gap-2">
+            <AlertDialogCancel disabled={sending}>Annulla</AlertDialogCancel>
+            <AlertDialogAction
+              disabled={sending}
+              onClick={sendReservation}
+              className="gap-2"
+            >
+              {sending ? "Invio in corso..." : "Conferma"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
-      </AlertDialog>
-    </div>
+      )}
+    </AlertDialog>
   );
 }
 
-function FormFiedlDescription({
-  label,
-  value,
-}: {
+// ─── SummaryRow ───────────────────────────────────────────────────────────────
+
+interface SummaryRowProps {
+  icon: React.ElementType;
   label: string;
-  value: string;
-}) {
+  value: React.ReactNode;
+}
+
+/**
+ * Riga del riepilogo nel dialog di conferma.
+ * Mostra un'icona, un'etichetta e il valore corrispondente.
+ */
+function SummaryRow({ icon: Icon, label, value }: SummaryRowProps) {
   return (
-    <span className="flex flex-1 flex-col">
-      <span className="text-xs font-medium capitalize truncate">{label}</span>
-      <span className="  max-w-full">{value}</span>
-    </span>
+    <div className="flex items-start gap-3">
+      <div className="p-1.5 rounded-md bg-primary/10 text-primary shrink-0 mt-0.5">
+        <Icon className="w-3.5 h-3.5" />
+      </div>
+      <div className="flex-1 min-w-0">
+        <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide leading-none mb-0.5">
+          {label}
+        </p>
+        <div className="text-sm font-medium text-foreground break-words">
+          {value}
+        </div>
+      </div>
+    </div>
   );
 }
