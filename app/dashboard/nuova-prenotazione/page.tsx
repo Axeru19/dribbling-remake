@@ -299,7 +299,7 @@ export default function NuovaPrenotazione() {
         {/* ── Summary Bar: mostra solo le selezioni già effettuate ─────────── */}
         {(selectedField || draft.date || selectedTimeLabel) && (
           <div className="flex flex-wrap items-center gap-2">
-            <span className="text-xs text-muted-foreground font-medium uppercase tracking-wide shrink-0">
+            <span className="text-xs text-muted-foreground font-medium shrink-0">
               Selezione:
             </span>
             {selectedField && (
@@ -398,7 +398,7 @@ export default function NuovaPrenotazione() {
               </CardHeader>
               <CardContent className="px-4 sm:px-5 pb-4">
                 {/* Tutti i 21 giorni in flex-wrap: nessun giorno nascosto */}
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap justify-center md:justify-start gap-2">
                   {Array.from({ length: 21 }).map((_, index) => {
                     const date = new Date();
                     date.setDate(date.getDate() + index);
@@ -553,8 +553,8 @@ export default function NuovaPrenotazione() {
                             }));
                           }}
                           className={[
-                            "rounded-xl px-2 py-3 text-sm font-semibold border-2 text-center",
-                            "transition-all duration-200 cursor-pointer w-full md:w-auto md:px-4",
+                            "rounded-xl py-3 text-sm font-semibold border-2 text-center",
+                            "transition-all duration-200 cursor-pointer w-[64px]",
                             "hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-primary",
                             isSelected
                               ? "border-primary bg-primary text-primary-foreground shadow-md"
