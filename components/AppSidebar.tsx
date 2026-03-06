@@ -91,6 +91,7 @@ export default async function AppSidebar({
   user,
 }: Readonly<{ user: AppUser }>) {
   const items = user.role_id === UserRole.ADMIN ? itemsAdmin : itemsUser;
+  console.log(items);
 
   return (
     <Sidebar collapsible="icon">
@@ -133,17 +134,7 @@ export default async function AppSidebar({
             <SidebarMenu className="gap-0.5">
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton
-                    asChild
-                    className="
-                      group h-9 rounded-lg px-3 gap-3
-                      text-muted-foreground font-medium
-                      hover:bg-primary/8 hover:text-foreground
-                      data-[active=true]:bg-primary/10 data-[active=true]:text-primary data-[active=true]:font-semibold
-                      transition-colors duration-150
-                      group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:gap-0
-                    "
-                  >
+                  <SidebarMenuButton asChild>
                     <a href={item.url}>
                       <item.icon className="size-4 shrink-0 transition-colors duration-150" />
                       <span className="text-sm">{item.title}</span>
