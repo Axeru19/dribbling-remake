@@ -11,7 +11,12 @@ export type AppUser = {
 };
 
 export type ReservationPostRequest = {
+  /** Giorno specifico (vista giornaliera). */
   date?: Date;
+  /** Inizio range date inclusivo (vista settimanale). */
+  startDate?: Date;
+  /** Fine range date inclusivo (vista settimanale). */
+  endDate?: Date;
   id_user?: number;
   id_field?: number;
   start_time?: string;

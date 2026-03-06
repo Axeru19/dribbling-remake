@@ -1,45 +1,51 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { Prisma, view_reservations } from "@prisma/client";
 import { ReservationPostRequest } from "@/types/types";
-import { reservations, view_reservations } from "@prisma/client";
 import { normalizeIds } from "@/utils/normalizeIds";
 
 export async function POST(request: NextRequest) {
-  // const data: ReservationPostRequest = await request.json();
   const body: ReservationPostRequest = await request.json();
 
-  // cerchiamo dalle reservations normali, prendiamo gli id, e poi cerchiamo nella view
+  /*
+   * Costruzione del filtro `date`:
+   *  - Se è presente un range (startDate + endDate) → `gte` / `lte`
+   *  - Altrimenti → exact match su `date` (comportamento originale)
+   */
+  let dateFilter: Prisma.DateTimeFilter | Date | undefined;
+
+  if (body.startDate && body.endDate) {
+    dateFilter = {
+      gte: new Date(body.startDate),
+      lte: new Date(body.endDate),
+    };
+  } else if (body.date) {
+    dateFilter = new Date(body.date);
+  }
+
+  // Prima query: recupera le prenotazioni (tabella leggera, senza JOIN)
   const reservationsRaw = await prisma.reservations.findMany({
     where: {
       id_status: body.id_status ?? undefined,
-      id_user: body.id_user ?? undefined,
-      id_field: body.id_field ?? undefined,
-      date: body.date ? new Date(body.date) : undefined,
+      id_user:   body.id_user   ?? undefined,
+      id_field:  body.id_field  ?? undefined,
+      date:      dateFilter,
     },
   });
 
-  // se non ci sono prenotazioni, ritorniamo un array vuoto
+  // Nessuna prenotazione → risposta immediata senza seconda query
   if (reservationsRaw.length === 0) {
     return NextResponse.json([]);
   }
 
-  // prendo tutti gli id delle prenotazioni trovate
-  // e li uso per cercare nella view_reservations
-  const reservationsIds = reservationsRaw.map((reservation) =>
-    Number(reservation.id),
-  );
+  // Seconda query: popola la view con i soli id trovati (evita full-scan)
+  const reservationIds = reservationsRaw.map((r) => Number(r.id));
 
   const reservations: view_reservations[] =
     await prisma.view_reservations.findMany({
-      where: {
-        id: {
-          in: reservationsIds,
-        },
-      },
-
-      orderBy: {
-        id: "desc",
-      },
+      where: { id: { in: reservationIds } },
+      orderBy: { id: "desc" },
     });
+
   return NextResponse.json(normalizeIds(reservations));
 }
