@@ -159,7 +159,7 @@ function ReservationCard({ reservation, onDelete }: ReservationCardProps) {
         <div className="flex items-start justify-between gap-3 border-b pb-4">
           <div className="flex flex-col gap-0.5 min-w-0">
             {/* Data della partita */}
-            <p className="font-semibold leading-tight capitalize">
+            <p className="font-bold text-xl capitalize">
               {format(new Date(reservation.date), "EEEE d MMMM yyyy", {
                 locale: it,
               })}
