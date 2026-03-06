@@ -27,15 +27,15 @@ export default function SidebarUserInfo() {
   return (
     <SidebarMenuButton
       size="lg"
-      className="h-fit hover:bg-muted/60 active:bg-muted rounded-lg py-2 px-2 cursor-default"
+      className="h-auto hover:bg-muted/60 active:bg-muted rounded-lg py-2 px-2 cursor-default group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:p-0"
     >
       {/* Avatar con iniziali */}
-      <div className="flex items-center justify-center size-8 rounded-lg bg-primary/15 text-primary text-xs font-bold shrink-0 select-none">
+      <div className="flex items-center justify-center size-8 min-w-8 min-h-8 rounded-lg bg-primary/15 text-primary text-xs font-bold shrink-0 select-none">
         {initials}
       </div>
 
       {/* Info testo */}
-      <div className="flex flex-col leading-tight min-w-0">
+      <div className="flex flex-col leading-tight min-w-0 group-data-[collapsible=icon]:hidden">
         <span className="text-sm font-semibold text-foreground truncate">
           {user?.name} {user?.surname}
         </span>

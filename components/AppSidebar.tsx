@@ -148,7 +148,7 @@ export default async function AppSidebar({
       </SidebarContent>
 
       {/* ── Footer: info utente + logout ──────────────────────────────────── */}
-      <SidebarFooter className="border-t border-sidebar-border/60 pt-2 pb-3 px-3">
+      <SidebarFooter className="border-t border-sidebar-border/60 pt-2 pb-3 px-2 group-data-[collapsible=icon]:px-1">
         <SidebarMenu className="gap-1">
           {/* Info utente */}
           <SidebarMenuItem>
