@@ -3,7 +3,12 @@
 import DeleteReservationButton from "@/components/deletereservation-button";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+} from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { ReservationStatus, ReservationStatusColor } from "@/lib/enums";
 import { AppUser } from "@/types/types";
@@ -149,12 +154,12 @@ function ReservationCard({ reservation, onDelete }: ReservationCardProps) {
     <Card
       className={`border-2 shadow-sm transition-all duration-200 hover:shadow-md ${meta.ringClass}`}
     >
-      <CardContent className="p-5 flex flex-col gap-4">
+      <CardHeader>
         {/* ── Header: data + badge stato ─────────────────────────────────── */}
-        <div className="flex items-start justify-between gap-3">
+        <div className="flex items-start justify-between gap-3 border-b pb-4">
           <div className="flex flex-col gap-0.5 min-w-0">
             {/* Data della partita */}
-            <p className="font-semibold text-sm leading-tight capitalize">
+            <p className="font-semibold leading-tight capitalize">
               {format(new Date(reservation.date), "EEEE d MMMM yyyy", {
                 locale: it,
               })}
@@ -171,9 +176,8 @@ function ReservationCard({ reservation, onDelete }: ReservationCardProps) {
             {meta.label}
           </Badge>
         </div>
-
-        <Separator />
-
+      </CardHeader>
+      <CardContent className="px-5 flex flex-col gap-4">
         {/* ── Dettagli: campo, orario, tipo squadre ─────────────────────── */}
         <div className="grid grid-cols-2 gap-x-4 gap-y-2">
           {/* Campo */}
@@ -210,9 +214,10 @@ function ReservationCard({ reservation, onDelete }: ReservationCardProps) {
             </p>
           </div>
         )}
-
+      </CardContent>
+      <CardFooter>
         {/* ── Azioni ────────────────────────────────────────────────────── */}
-        <div className="flex items-center gap-2 pt-1">
+        <div className="flex items-center gap-2 pt-1 w-full">
           {/* Paga: visibile solo se la prenotazione è confermata */}
           {canPay && (
             <Button size="sm" className="flex-1 gap-1.5 text-xs font-semibold">
@@ -228,7 +233,7 @@ function ReservationCard({ reservation, onDelete }: ReservationCardProps) {
             />
           )}
         </div>
-      </CardContent>
+      </CardFooter>
     </Card>
   );
 }
