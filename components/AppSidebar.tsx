@@ -124,7 +124,7 @@ export default async function AppSidebar({
       </SidebarHeader>
 
       {/* ── Contenuto: voci navigazione ───────────────────────────────────── */}
-      <SidebarContent className="px-2 py-3">
+      <SidebarContent className="px-2 py-3 group-data-[collapsible=icon]:px-0">
         <SidebarGroup>
           <SidebarGroupLabel className="text-[12px] font-bold text-muted-foreground/60 px-2 mb-1">
             Funzionalità
@@ -141,6 +141,7 @@ export default async function AppSidebar({
                       hover:bg-primary/8 hover:text-foreground
                       data-[active=true]:bg-primary/10 data-[active=true]:text-primary data-[active=true]:font-semibold
                       transition-colors duration-150
+                      group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:gap-0
                     "
                   >
                     <a href={item.url}>

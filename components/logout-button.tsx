@@ -18,9 +18,9 @@ export default function LogoutButton() {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <SidebarMenuButton className="cursor-pointer" size={"lg"}>
+        <SidebarMenuButton className="cursor-pointer group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:gap-0" size={"lg"}>
           <LogOut size={16} />
-          <span>Logout</span>
+          <span className="group-data-[collapsible=icon]:hidden">Logout</span>
         </SidebarMenuButton>
       </AlertDialogTrigger>
       <AlertDialogContent>
