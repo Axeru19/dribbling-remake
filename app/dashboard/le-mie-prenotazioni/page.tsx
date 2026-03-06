@@ -220,7 +220,11 @@ function ReservationCard({ reservation, onDelete }: ReservationCardProps) {
         <div className="flex items-center gap-2 pt-1 w-full">
           {/* Paga: visibile solo se la prenotazione è confermata */}
           {canPay && (
-            <Button size="sm" className="flex-1 gap-1.5 text-xs font-semibold">
+            <Button
+              size="sm"
+              disabled
+              className="flex-1 gap-1.5 text-xs font-semibold"
+            >
               <CreditCard className="w-3.5 h-3.5" />
               Paga
             </Button>
