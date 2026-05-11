@@ -9,7 +9,7 @@
  */
 
 import { fields, reservations } from "@prisma/client";
-import React from "react";
+import React, { useState } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -37,6 +37,7 @@ import {
   Users2,
   StickyNote,
   Save,
+  Repeat2,
 } from "lucide-react";
 
 // ─── Schema di validazione ─────────────────────────────────────────────────
@@ -78,6 +79,7 @@ export default function ReservationDetailForm({
   reservation,
 }: ReservationDetailFormProps) {
   const availableFields: fields[] = useFields();
+  const [updateSeries, setUpdateSeries] = useState(false);
 
   /** Default values differenziati tra nuova e prenotazione esistente */
   const defaultValues: Partial<FormValues> = reservation
@@ -121,11 +123,12 @@ export default function ReservationDetailForm({
       id_user: reservation!.id_user,
       id_status: reservation!.id_status,
       user_not_registered: reservation!.user_not_registered,
+      id_reservation_fixed: reservation!.id_reservation_fixed,
     };
 
     fetch("/api/reservations/" + reservation?.id, {
       method: "PUT",
-      body: JSON.stringify({ reservation: newReservation }),
+      body: JSON.stringify({ reservation: newReservation, updateSeries }),
       headers: { "Content-Type": "application/json" },
     })
       .then((res) => {
@@ -329,6 +332,27 @@ export default function ReservationDetailForm({
             />
           </div>
 
+          {/* ── Toggle aggiorna serie (solo prenotazioni fisse) ── */}
+          {reservation?.id_reservation_fixed != null && (
+            <div className="flex items-center justify-between rounded-lg border border-amber-500/30 bg-amber-500/5 px-4 py-3">
+              <div className="flex items-center gap-2.5">
+                <Repeat2 className="size-4 text-amber-600" />
+                <div>
+                  <p className="text-sm font-medium leading-none">
+                    Aggiorna tutta la serie
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    Applica orario a tutte le prenotazioni della serie
+                  </p>
+                </div>
+              </div>
+              <Switch
+                checked={updateSeries}
+                onCheckedChange={setUpdateSeries}
+              />
+            </div>
+          )}
+
           {/* ── CTA ───────────────────────────────────────────── */}
           <Button
             type="submit"
@@ -336,7 +360,7 @@ export default function ReservationDetailForm({
             className="w-full gap-2"
           >
             <Save className="size-4" />
-            Salva modifiche
+            {updateSeries ? "Salva e aggiorna serie" : "Salva modifiche"}
           </Button>
         </form>
       </Form>

@@ -12,6 +12,7 @@
  */
 
 import DeleteReservationButton from "@/components/deletereservation-button";
+import DeleteSeriesButton from "@/components/DeleteSeriesButton";
 import ReservationDetailForm from "@/components/ReservationDetailForm";
 import ReservationPaymentsTable from "@/components/ReservationPaymentsTable";
 import ReservationUserSelection from "@/components/ReservationUserSelection";
@@ -19,7 +20,7 @@ import ReservationStatusBadge from "@/components/ReservationStatusBadge";
 import { useFields } from "@/context/FieldsContex";
 import { ReservationStatus } from "@/lib/enums";
 import { fields, reservations, users_wallets } from "@prisma/client";
-import { ChevronRight, LayoutGrid } from "lucide-react";
+import { ChevronRight, LayoutGrid, Repeat2 } from "lucide-react";
 import Link from "next/link";
 import React, { use, useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -58,6 +59,28 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
       })
       .finally(() => setLoading(false));
   }, []);
+
+  // ── Eliminazione serie fissa ───────────────────────────────────────────
+  function deleteSeriesReservations() {
+    if (!reservation?.id_reservation_fixed) return;
+
+    fetch(`/api/reservations/fixed/${reservation.id_reservation_fixed}/status`, {
+      method: "PUT",
+      body: JSON.stringify({ status: ReservationStatus.DELETED }),
+      headers: { "Content-Type": "application/json" },
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error("Network response was not ok");
+        return res.json();
+      })
+      .then(() => {
+        toast.success("Serie eliminata con successo.");
+        window.location.href = "/dashboard/partite";
+      })
+      .catch(() => {
+        toast.error("Errore durante l'eliminazione della serie.");
+      });
+  }
 
   // ── Eliminazione prenotazione — logica invariata ───────────────────────
   function deleteReservation() {
@@ -179,10 +202,19 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
           {/* Badge stato + pulsante elimina */}
           {!loading && reservation && (
             <div className="flex items-center gap-3 shrink-0">
+              {reservation.id_reservation_fixed != null && (
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/40 bg-amber-500/10 px-3 py-1.5 text-sm font-semibold text-amber-600">
+                  <Repeat2 className="size-3" />
+                  Fissa
+                </span>
+              )}
               <ReservationStatusBadge
                 idStatus={reservation.id_status}
                 size="md"
               />
+              {reservation.id_reservation_fixed != null && (
+                <DeleteSeriesButton deleteSeries={deleteSeriesReservations} />
+              )}
               <DeleteReservationButton deleteReservation={deleteReservation} />
             </div>
           )}

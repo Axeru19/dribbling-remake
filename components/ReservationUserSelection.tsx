@@ -14,7 +14,8 @@ import { Input } from "./ui/input";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
-import { Search, UserPlus, UserCheck, Users, ArrowRight } from "lucide-react";
+import { Switch } from "./ui/switch";
+import { Search, UserPlus, UserCheck, Users, ArrowRight, Repeat2 } from "lucide-react";
 
 interface ReservationUserSelectionProps {
   user: users_wallets | null;
@@ -34,6 +35,8 @@ export default function ReservationUserSelection({
 }: ReservationUserSelectionProps) {
   const [userSearch, setUserSearch] = useState<string>("");
   const [userList, setUserList] = useState<users_wallets[] | null>(null);
+  const [isFixed, setIsFixed] = useState(false);
+  const [weeksCount, setWeeksCount] = useState(4);
 
   // ── Debounce ricerca utenti ─────────────────────────────────────────────
   useEffect(() => {
@@ -60,7 +63,7 @@ export default function ReservationUserSelection({
     return () => clearTimeout(timeout);
   }, [userSearch]);
 
-  // ── Inserimento prenotazione — logica invariata ─────────────────────────
+  // ── Inserimento prenotazione ────────────────────────────────────────────
   function insertReservation() {
     const userSelected: string | number =
       userSearch.length > 0 && userList && userList.length === 0
@@ -69,9 +72,17 @@ export default function ReservationUserSelection({
           ? Number(user!.user_id)
           : 0;
 
-    fetch("/api/reservations/insert", {
+    const endpoint = isFixed
+      ? "/api/reservations/insert-fixed"
+      : "/api/reservations/insert";
+
+    const body = isFixed
+      ? { user: userSelected, weeks: weeksCount }
+      : { user: userSelected };
+
+    fetch(endpoint, {
       method: "POST",
-      body: JSON.stringify({ user: userSelected }),
+      body: JSON.stringify(body),
       headers: { "Content-Type": "application/json" },
     })
       .then((res) => {
@@ -186,6 +197,39 @@ export default function ReservationUserSelection({
         </div>
       )}
 
+      {/* ── Toggle prenotazione fissa ──────────────────────────────────── */}
+      {canInsert && (
+        <div className="w-full max-w-md flex flex-col gap-3 animate-in fade-in slide-in-from-bottom-2 duration-200">
+          <div className="flex items-center justify-between rounded-xl border border-border bg-muted/40 px-4 py-3">
+            <div className="flex items-center gap-2.5">
+              <Repeat2 className="size-4 text-muted-foreground" />
+              <div>
+                <p className="text-sm font-medium leading-none">Prenotazione fissa settimanale</p>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  Ripete la prenotazione ogni settimana
+                </p>
+              </div>
+            </div>
+            <Switch checked={isFixed} onCheckedChange={setIsFixed} />
+          </div>
+
+          {isFixed && (
+            <div className="flex items-center gap-3 px-4 py-3 rounded-xl border border-amber-500/30 bg-amber-500/5">
+              <Repeat2 className="size-4 text-amber-600 shrink-0" />
+              <label className="text-sm text-foreground flex-1">Numero di settimane</label>
+              <Input
+                type="number"
+                min={1}
+                max={52}
+                value={weeksCount}
+                onChange={(e) => setWeeksCount(Math.max(1, Math.min(52, Number(e.target.value))))}
+                className="w-20 h-8 text-center"
+              />
+            </div>
+          )}
+        </div>
+      )}
+
       {/* ── CTA Button ─────────────────────────────────────────────────── */}
       {canInsert && (
         <Button
@@ -195,12 +239,12 @@ export default function ReservationUserSelection({
           {userList !== null && userList.length === 0 ? (
             <>
               <UserPlus className="size-4" />
-              Crea con utente non registrato
+              {isFixed ? `Crea serie fissa (${weeksCount} settimane) — utente non registrato` : "Crea con utente non registrato"}
             </>
           ) : (
             <>
               <ArrowRight className="size-4" />
-              Inserisci prenotazione
+              {isFixed ? `Inserisci serie fissa (${weeksCount} settimane)` : "Inserisci prenotazione"}
             </>
           )}
         </Button>

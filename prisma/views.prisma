@@ -13,21 +13,22 @@ model users_wallets {
 
 
 model view_reservations {
-  id          Int      @id
-  date        DateTime
-  start_time  DateTime
-  end_time    DateTime
-  room        String?
-  notes       String? 
-  user_not_registered   String?
-  name        String?
-  surname     String?
-  telephone   String?
-  email       String?
-  nickname    String?
-  description String?
-  mixed       Boolean?
-  id_status   Int
+  id                   Int      @id
+  date                 DateTime
+  start_time           DateTime
+  end_time             DateTime
+  room                 String?
+  notes                String?
+  user_not_registered  String?
+  name                 String?
+  surname              String?
+  telephone            String?
+  email                String?
+  nickname             String?
+  description          String?
+  mixed                Boolean?
+  id_status            Int
+  id_reservation_fixed BigInt?
 
   @@map("view_reservations")
 }

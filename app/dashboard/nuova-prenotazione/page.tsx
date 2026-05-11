@@ -275,6 +275,7 @@ export default function NuovaPrenotazione() {
       notes: draft.notes,
       mixed: draft.mixed,
       user_not_registered: null,
+      id_reservation_fixed: null,
     };
   }
 

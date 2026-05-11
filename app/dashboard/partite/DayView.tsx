@@ -84,6 +84,7 @@ function EventBlock({ reservation }: EventBlockProps) {
 
   const startLabel = formatTime(reservation.start_time);
   const endLabel = formatTime(reservation.end_time);
+  const isFixed = reservation.id_reservation_fixed != null;
 
   return (
     <Link
@@ -92,8 +93,20 @@ function EventBlock({ reservation }: EventBlockProps) {
       style={{ top: topPx, height: heightPx }}
       title={`${displayName} — ${startLabel}→${endLabel}`}
     >
-      <div className="w-full h-full rounded-md border-l-[3px] border-primary bg-primary/10 hover:bg-primary/20 transition-colors duration-150 overflow-hidden px-1.5 py-1 flex flex-col justify-start shadow-sm">
-        <span className="text-[11px] font-semibold text-foreground leading-tight truncate group-hover:text-primary transition-colors">
+      <div
+        className={`w-full h-full rounded-md border-l-[3px] transition-colors duration-150 overflow-hidden px-1.5 py-1 flex flex-col justify-start shadow-sm ${
+          isFixed
+            ? "border-amber-500 bg-amber-500/10 hover:bg-amber-500/20"
+            : "border-primary bg-primary/10 hover:bg-primary/20"
+        }`}
+      >
+        <span
+          className={`text-[11px] font-semibold leading-tight truncate transition-colors ${
+            isFixed
+              ? "text-foreground group-hover:text-amber-600"
+              : "text-foreground group-hover:text-primary"
+          }`}
+        >
           {displayName}
         </span>
         {heightPx >= 36 && (

@@ -19,12 +19,12 @@ export async function POST(req: NextRequest) {
     user_not_registered: typeof user === "string" ? user : null,
     id_field: 1,
     start_time: start_time,
-    // add 1 hour to end_time from start_time
     end_time: end_time,
     notes: null,
     room: null,
     mixed: false,
     id_status: ReservationStatus.CONFIRMED,
+    id_reservation_fixed: null,
   };
 
   const res = await prisma.reservations.create({

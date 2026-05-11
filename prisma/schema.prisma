@@ -32,6 +32,7 @@ model reservations {
   mixed                Boolean?              @default(false)
   id_status            Int?                  @default(1)
   user_not_registered  String?               @db.VarChar
+  id_reservation_fixed BigInt?
   fields               fields?               @relation(fields: [id_field], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "reservations_fields_fk")
   reservation_statuses reservation_statuses? @relation(fields: [id_status], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "reservations_reservation_statuses_fk")
   users                users?                @relation(fields: [id_user], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "reservations_users_fk")
@@ -97,21 +98,22 @@ model users_wallets {
 
 
 model view_reservations {
-  id          Int      @id
-  date        DateTime
-  start_time  DateTime
-  end_time    DateTime
-  room        String?
-  notes       String? 
-  user_not_registered   String?
-  name        String?
-  surname     String?
-  telephone   String?
-  email       String?
-  nickname    String?
-  description String?
-  mixed       Boolean?
-  id_status   Int
+  id                   Int      @id
+  date                 DateTime
+  start_time           DateTime
+  end_time             DateTime
+  room                 String?
+  notes                String?
+  user_not_registered  String?
+  name                 String?
+  surname              String?
+  telephone            String?
+  email                String?
+  nickname             String?
+  description          String?
+  mixed                Boolean?
+  id_status            Int
+  id_reservation_fixed BigInt?
 
   @@map("view_reservations")
 }
