@@ -1,10 +1,31 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { WalletUpdateType } from "@/lib/enums";
+import { normalizeIds } from "@/utils/normalizeIds";
 
 interface WalletUpdateRequest {
   type: WalletUpdateType;
   amount: number;
+}
+
+export async function GET(
+  _request: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
+) {
+  const { id } = await params;
+
+  const wallet = await prisma.users_wallets.findUnique({
+    where: { user_id: Number(id) },
+  });
+
+  if (!wallet) {
+    return NextResponse.json(
+      { error: "Portafoglio non trovato" },
+      { status: 404 },
+    );
+  }
+
+  return NextResponse.json(normalizeIds(wallet));
 }
 
 export async function PUT(
