@@ -101,3 +101,22 @@ new Date(date.getTime() - date.getTimezoneOffset() * 60000)
 | `fields/list` | GET | Lista campi |
 | `users/[id]` | GET/PUT | Fetch / aggiorna utente |
 | `wallets/[id]` | GET/PUT | Portafoglio |
+
+## Note implementative
+
+Questa sezione raccoglie decisioni tecniche non ovvie emerse durante lo sviluppo.
+
+### Portafoglio — pagamento prenotazioni (`app/dashboard/portafoglio/`)
+
+**GET saldo**: `GET /api/wallets/[id]` dove `[id]` = **user ID** (non wallet ID). Query su view `users_wallets` (`findUnique({ where: { user_id: Number(id) } })`). Campi: `user_id`, `wallet_id Int?`, `balance Float?`.
+
+**Flow pagamento** (state machine `PayStep`):
+1. `POST /api/reservations/${id}` con body `{ id: Number(id) }` — fetch prenotazione
+2. Validare: `String(data.id_user) === String(user.id)` + `id_status === ReservationStatus.CONFIRMED`
+3. `PUT /api/wallets/${wallet.wallet_id}` con `{ type: WalletUpdateType.SUBTRACT, amount: number }`
+
+**Nessun campo prezzo** nelle prenotazioni → l'utente inserisce l'importo manualmente.
+
+**TypeScript narrowing**: dentro `{payStep === "found" && ...}` TS narra payStep come `"found"`, comparare con `"paying"` causa errore. Fix: `(payStep === "found" || payStep === "paying") && ...`.
+
+**Date/time format**: `date` → `"2024-01-15T00:00:00.000Z"` (usa `format()` da date-fns). `start_time`/`end_time` → `"1970-01-01T10:30:00.000Z"` (estrarre `.toISOString().substring(11, 16)`).
