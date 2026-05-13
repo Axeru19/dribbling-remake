@@ -3,7 +3,10 @@
     "allow": [
       "Bash(Get-ChildItem -Path \"C:\\\\Dev\\\\dribbling-remake\" -Force)",
       "Bash(Select-Object Name, PSIsContainer)",
-      "Bash(Format-Table -AutoSize)"
+      "Bash(Format-Table -AutoSize)",
+      "Bash(node *)",
+      "Skill(impeccable)",
+      "Bash(npx tsc *)"
     ]
   }
 }
