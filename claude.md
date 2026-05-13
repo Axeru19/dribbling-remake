@@ -4,10 +4,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Istruzioni operative
 
-- Leggi sempre e tieni aggiornato `.claude/context.md` prima e dopo ogni task. Se diventa troppo lungo, riassumilo.
 - Non leggere mai la cartella `node_modules`.
 - Per qualsiasi comunicazione usa la skill **Caveman**.
-- Per interventi su UX/UI usa le skill **impeccable** e **design-taste-frontend**.
 
 ## Comandi
 
