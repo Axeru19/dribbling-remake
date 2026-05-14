@@ -6,6 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 - Non leggere mai la cartella `node_modules`.
 - Per qualsiasi comunicazione usa la skill **Caveman**.
+- Aggiorna sempre la memoria in questo file della repository tenendo il contesto sempre attuale
 
 ## Comandi
 
@@ -25,11 +26,13 @@ npx prisma generate  # rigenera client TypeScript dopo modifiche schema
 **Stack:** Next.js 15.5 App Router · TypeScript strict · Prisma v6 + PostgreSQL · NextAuth v4 (JWT) · shadcn/ui · Tailwind v4 · tw-animate-css · lucide-react · sonner (toast) · react-hook-form + zod
 
 **Layout dashboard** (`app/dashboard/layout.tsx`):
+
 - `main` = `h-dvh flex flex-col overflow-hidden`
 - Header fisso (`shrink-0`)
 - Content wrapper = `flex-1 overflow-auto p-6` — i children ricevono questa altezza
 
 **Pagine dashboard principali:**
+
 - `partite/` — calendario prenotazioni (DayView, WeekView)
 - `partite/[id]/` — dettaglio singola partita
 - `nuova-prenotazione/` — wizard 4 step per creare prenotazione
@@ -38,6 +41,7 @@ npx prisma generate  # rigenera client TypeScript dopo modifiche schema
 - `utenti/`, `campi/`, `pagamenti/`, `portafoglio/`, `profilo/`
 
 **Providers context** (`context/`):
+
 - `FieldsProvider` — lista campi attivi, caricata server-side nel layout e passata via context
 - `SessionProviderWrapper` — wrap di NextAuth SessionProvider
 
@@ -54,6 +58,7 @@ npx prisma generate  # rigenera client TypeScript dopo modifiche schema
 Il DB contiene view PostgreSQL (`view_reservations`, `users_wallets`) modellate come `model` in Prisma. Un `db push` tenta di crearle come tabelle e fallisce con `ERROR: relation already exists`.
 
 **Procedura corretta per modifiche allo schema:**
+
 1. Modifica `prisma/schema.prisma` e `prisma/views.prisma` (tenerli in sync)
 2. Applica DDL direttamente via `prisma.$executeRawUnsafe()`
 3. `npx prisma generate`
@@ -63,7 +68,7 @@ Il DB contiene view PostgreSQL (`view_reservations`, `users_wallets`) modellate 
 
 ## BigInt e serializzazione
 
-Prisma restituisce `BigInt` per `id`, `id_user`, `id_reservation_fixed`. 
+Prisma restituisce `BigInt` per `id`, `id_user`, `id_reservation_fixed`.
 
 - **Prima di rispondere al client**: `normalizeIds(result)` (`utils/normalizeIds.ts`) — converte tutti i BigInt in Number ricorsivamente.
 - **Prima di passare a Prisma**: riconvertire con `BigInt(value)`.
@@ -73,7 +78,7 @@ Prisma restituisce `BigInt` per `id`, `id_user`, `id_reservation_fixed`.
 Le date sono memorizzate come orario locale (no UTC esplicito). Pattern per allineare:
 
 ```ts
-new Date(date.getTime() - date.getTimezoneOffset() * 60000)
+new Date(date.getTime() - date.getTimezoneOffset() * 60000);
 ```
 
 ## Prenotazioni fisse (serie settimanale)
@@ -82,25 +87,25 @@ new Date(date.getTime() - date.getTimezoneOffset() * 60000)
 
 ## Colori UI
 
-| Tipo | Colore |
-|------|--------|
-| Prenotazione singola | `primary` (blu) |
+| Tipo                       | Colore                  |
+| -------------------------- | ----------------------- |
+| Prenotazione singola       | `primary` (blu)         |
 | Prenotazione fissa (serie) | `amber-500` (arancione) |
 
 ## API routes (`app/api/`)
 
-| Route | Metodo | Funzione |
-|-------|--------|----------|
-| `reservations/send` | POST | Crea prenotazione singola |
-| `reservations/insert-fixed` | POST | Crea serie fissa |
-| `reservations/list` | POST | Lista prenotazioni |
-| `reservations/[id]` | POST/PUT | Fetch / aggiorna |
-| `reservations/[id]/status` | PUT | Cambia stato |
-| `reservations/fixed/[seriesId]/status` | PUT | Cambia stato intera serie |
-| `slot/available` | POST | Slot liberi (`get_available_slots`) |
-| `fields/list` | GET | Lista campi |
-| `users/[id]` | GET/PUT | Fetch / aggiorna utente |
-| `wallets/[id]` | GET/PUT | Portafoglio |
+| Route                                  | Metodo   | Funzione                            |
+| -------------------------------------- | -------- | ----------------------------------- |
+| `reservations/send`                    | POST     | Crea prenotazione singola           |
+| `reservations/insert-fixed`            | POST     | Crea serie fissa                    |
+| `reservations/list`                    | POST     | Lista prenotazioni                  |
+| `reservations/[id]`                    | POST/PUT | Fetch / aggiorna                    |
+| `reservations/[id]/status`             | PUT      | Cambia stato                        |
+| `reservations/fixed/[seriesId]/status` | PUT      | Cambia stato intera serie           |
+| `slot/available`                       | POST     | Slot liberi (`get_available_slots`) |
+| `fields/list`                          | GET      | Lista campi                         |
+| `users/[id]`                           | GET/PUT  | Fetch / aggiorna utente             |
+| `wallets/[id]`                         | GET/PUT  | Portafoglio                         |
 
 ## Note implementative
 
@@ -111,6 +116,7 @@ Questa sezione raccoglie decisioni tecniche non ovvie emerse durante lo sviluppo
 **GET saldo**: `GET /api/wallets/[id]` dove `[id]` = **user ID** (non wallet ID). Query su view `users_wallets` (`findUnique({ where: { user_id: Number(id) } })`). Campi: `user_id`, `wallet_id Int?`, `balance Float?`.
 
 **Flow pagamento** (state machine `PayStep`):
+
 1. `POST /api/reservations/${id}` con body `{ id: Number(id) }` — fetch prenotazione
 2. Validare: `String(data.id_user) === String(user.id)` + `id_status === ReservationStatus.CONFIRMED`
 3. `PUT /api/wallets/${wallet.wallet_id}` con `{ type: WalletUpdateType.SUBTRACT, amount: number }`

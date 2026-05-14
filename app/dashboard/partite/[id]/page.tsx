@@ -126,7 +126,7 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
     : (reservation?.user_not_registered ?? "");
 
   return (
-    <div className="w-full flex flex-col gap-6 overflow-y-auto pb-6">
+    <div className="h-full flex flex-col gap-6 overflow-hidden">
       {/* ── Hero Header ─────────────────────────────────────────────────── */}
       <div className="rounded-xl border border-border bg-card shadow-sm overflow-hidden">
         {/* Striscia decorativa superiore */}
@@ -222,24 +222,24 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
       </div>
 
       {/* ── Corpo pagina ────────────────────────────────────────────────── */}
-      <div className="flex flex-col lg:flex-row gap-6 w-full">
+      <div className="flex-1 min-h-0 flex flex-col lg:flex-row gap-6">
         {/* Colonna sinistra: form dettaglio */}
         {reservation && (
-          <div className="flex-1 min-w-0">
+          <div className="flex-1 min-w-0 min-h-0 overflow-auto">
             <ReservationDetailForm reservation={reservation} />
           </div>
         )}
 
         {/* Colonna destra: tabella pagamenti */}
         {reservation && (
-          <div className="flex-1 min-w-0">
+          <div className="flex-1 min-w-0 min-h-0 overflow-auto">
             <ReservationPaymentsTable reservation={reservation} />
           </div>
         )}
 
         {/* Vista "new": selezione utente */}
         {!reservation && !loading && (
-          <div className="flex-1 min-w-0">
+          <div className="flex-1 min-w-0 min-h-0 overflow-auto">
             <ReservationUserSelection
               user={reservationUser}
               setUser={setReservationUser}
@@ -250,8 +250,8 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
         {/* Skeleton per colonne in caricamento */}
         {loading && (
           <>
-            <div className="flex-1 min-h-[400px] rounded-xl border border-border bg-card shadow-sm animate-pulse" />
-            <div className="flex-1 min-h-[400px] rounded-xl border border-border bg-card shadow-sm animate-pulse" />
+            <div className="flex-1 min-h-0 rounded-xl border border-border bg-card shadow-sm animate-pulse" />
+            <div className="flex-1 min-h-0 rounded-xl border border-border bg-card shadow-sm animate-pulse" />
           </>
         )}
       </div>

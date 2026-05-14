@@ -141,9 +141,9 @@ export default function ReservationDetailForm({
   }
 
   return (
-    <div className="w-full h-full rounded-xl border border-border bg-card shadow-sm">
+    <div className="w-full h-full rounded-xl border border-border bg-card shadow-sm flex flex-col">
       {/* Header card */}
-      <div className="flex items-center gap-3 px-6 py-4 border-b border-border">
+      <div className="flex shrink-0 items-center gap-3 px-6 py-4 border-b border-border">
         <div className="flex items-center justify-center size-9 rounded-lg bg-primary/10">
           <CalendarDays className="size-4.5 text-primary" />
         </div>
@@ -158,6 +158,7 @@ export default function ReservationDetailForm({
       </div>
 
       {/* Form body */}
+      <div className="flex-1 overflow-auto">
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(updateReservation)}
@@ -364,6 +365,7 @@ export default function ReservationDetailForm({
           </Button>
         </form>
       </Form>
+      </div>
     </div>
   );
 }

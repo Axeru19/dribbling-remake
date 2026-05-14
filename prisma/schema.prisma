@@ -8,10 +8,11 @@ datasource db {
 }
 
 model fields {
-  id           Int            @id(map: "fields_pk") @default(autoincrement())
-  description  String?        @db.VarChar
-  status       Boolean        @default(true)
-  reservations reservations[]
+  id             Int            @id(map: "fields_pk") @default(autoincrement())
+  description    String?        @db.VarChar
+  status         Boolean        @default(true)
+  price_per_hour Float?         @db.Real
+  reservations   reservations[]
 }
 
 model reservation_statuses {

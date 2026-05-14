@@ -15,7 +15,14 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
 import { Switch } from "./ui/switch";
-import { Search, UserPlus, UserCheck, Users, ArrowRight, Repeat2 } from "lucide-react";
+import {
+  Search,
+  UserPlus,
+  UserCheck,
+  Users,
+  ArrowRight,
+  Repeat2,
+} from "lucide-react";
 
 interface ReservationUserSelectionProps {
   user: users_wallets | null;
@@ -36,7 +43,7 @@ export default function ReservationUserSelection({
   const [userSearch, setUserSearch] = useState<string>("");
   const [userList, setUserList] = useState<users_wallets[] | null>(null);
   const [isFixed, setIsFixed] = useState(false);
-  const [weeksCount, setWeeksCount] = useState(4);
+  const [weeksCount, setWeeksCount] = useState<number>(52); // settimane in un anno di default 52
 
   // ── Debounce ricerca utenti ─────────────────────────────────────────────
   useEffect(() => {
@@ -204,7 +211,9 @@ export default function ReservationUserSelection({
             <div className="flex items-center gap-2.5">
               <Repeat2 className="size-4 text-muted-foreground" />
               <div>
-                <p className="text-sm font-medium leading-none">Prenotazione fissa settimanale</p>
+                <p className="text-sm font-medium leading-none">
+                  Prenotazione fissa settimanale
+                </p>
                 <p className="text-xs text-muted-foreground mt-0.5">
                   Ripete la prenotazione ogni settimana
                 </p>
@@ -216,13 +225,19 @@ export default function ReservationUserSelection({
           {isFixed && (
             <div className="flex items-center gap-3 px-4 py-3 rounded-xl border border-amber-500/30 bg-amber-500/5">
               <Repeat2 className="size-4 text-amber-600 shrink-0" />
-              <label className="text-sm text-foreground flex-1">Numero di settimane</label>
+              <label className="text-sm text-foreground flex-1">
+                Numero di settimane
+              </label>
               <Input
                 type="number"
                 min={1}
                 max={52}
                 value={weeksCount}
-                onChange={(e) => setWeeksCount(Math.max(1, Math.min(52, Number(e.target.value))))}
+                onChange={(e) =>
+                  setWeeksCount(
+                    Math.max(1, Math.min(52, Number(e.target.value))),
+                  )
+                }
                 className="w-20 h-8 text-center"
               />
             </div>
@@ -239,12 +254,16 @@ export default function ReservationUserSelection({
           {userList !== null && userList.length === 0 ? (
             <>
               <UserPlus className="size-4" />
-              {isFixed ? `Crea serie fissa (${weeksCount} settimane) — utente non registrato` : "Crea con utente non registrato"}
+              {isFixed
+                ? `Crea serie fissa (${weeksCount} settimane) — utente non registrato`
+                : "Crea con utente non registrato"}
             </>
           ) : (
             <>
               <ArrowRight className="size-4" />
-              {isFixed ? `Inserisci serie fissa (${weeksCount} settimane)` : "Inserisci prenotazione"}
+              {isFixed
+                ? `Inserisci serie fissa (${weeksCount} settimane)`
+                : "Inserisci prenotazione"}
             </>
           )}
         </Button>
