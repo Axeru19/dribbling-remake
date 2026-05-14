@@ -51,6 +51,8 @@ npx prisma generate  # rigenera client TypeScript dopo modifiche schema
 
 **Slot disponibili**: calcolati via funzione PostgreSQL `get_available_slots(date, id_field)` chiamata con `prisma.$queryRaw`. Slot base in `lib/constants.ts`.
 
+**Campi** (`fields`): `id`, `description`, `status` (bool, default true), `price_per_hour Float?`. Toggle status via `PUT /api/fields/[id]`, aggiorna prezzo via `PATCH /api/fields/[id]`.
+
 ## Vincolo critico — Prisma e le view
 
 **Non usare mai `prisma db push` né `prisma migrate dev/deploy`.**
@@ -94,18 +96,23 @@ new Date(date.getTime() - date.getTimezoneOffset() * 60000);
 
 ## API routes (`app/api/`)
 
-| Route                                  | Metodo   | Funzione                            |
-| -------------------------------------- | -------- | ----------------------------------- |
-| `reservations/send`                    | POST     | Crea prenotazione singola           |
-| `reservations/insert-fixed`            | POST     | Crea serie fissa                    |
-| `reservations/list`                    | POST     | Lista prenotazioni                  |
-| `reservations/[id]`                    | POST/PUT | Fetch / aggiorna                    |
-| `reservations/[id]/status`             | PUT      | Cambia stato                        |
-| `reservations/fixed/[seriesId]/status` | PUT      | Cambia stato intera serie           |
-| `slot/available`                       | POST     | Slot liberi (`get_available_slots`) |
-| `fields/list`                          | GET      | Lista campi                         |
-| `users/[id]`                           | GET/PUT  | Fetch / aggiorna utente             |
-| `wallets/[id]`                         | GET/PUT  | Portafoglio                         |
+| Route                                  | Metodo      | Funzione                                        |
+| -------------------------------------- | ----------- | ----------------------------------------------- |
+| `reservations/send`                    | POST        | Crea prenotazione singola                       |
+| `reservations/insert`                  | POST        | Quick-insert admin (defaults: oggi, campo 1)    |
+| `reservations/insert-fixed`            | POST        | Crea serie fissa                                |
+| `reservations/list`                    | POST        | Lista prenotazioni                              |
+| `reservations/[id]`                    | POST/PUT    | Fetch / aggiorna                                |
+| `reservations/[id]/status`             | PUT         | Cambia stato                                    |
+| `reservations/fixed/[seriesId]/status` | PUT         | Cambia stato intera serie                       |
+| `slot/available`                       | POST        | Slot liberi (`get_available_slots`)             |
+| `fields/list`                          | GET         | Lista campi                                     |
+| `fields/[id]`                          | PUT / PATCH | Toggle status / aggiorna `price_per_hour`       |
+| `users/list`                           | GET         | Lista utenti                                    |
+| `users/[id]`                           | GET/PUT     | Fetch / aggiorna utente                         |
+| `users/[id]/change-password`           | PUT         | Cambia password                                 |
+| `wallets/[id]`                         | GET/PUT     | Portafoglio (id = user ID, non wallet ID)       |
+| `register`                             | POST        | Registrazione nuovo utente                      |
 
 ## Note implementative
 
