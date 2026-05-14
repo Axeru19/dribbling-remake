@@ -42,9 +42,6 @@ export default function Page() {
       {/* ── Header ─────────────────────────────────────────────────────── */}
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-5">
         <div>
-          <p className="text-[10px] font-semibold tracking-[0.15em] uppercase text-muted-foreground mb-2">
-            Amministrazione
-          </p>
           <h1 className="text-[28px] font-bold tracking-tight leading-none text-foreground">
             Gestione Campi
           </h1>
