@@ -98,7 +98,7 @@ function ReservationRow({ reservation, onDelete }: ReservationRowProps) {
 
   return (
     <div
-      className={`flex items-center gap-4 px-5 py-4 transition-colors hover:bg-accent/30 ${
+      className={`flex items-center gap-4 py-4 transition-colors hover:bg-accent/30 ${
         isInactive ? "opacity-50" : ""
       }`}
     >
