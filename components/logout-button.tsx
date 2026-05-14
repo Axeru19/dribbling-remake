@@ -1,4 +1,5 @@
 "use client";
+
 import { signOut } from "next-auth/react";
 import { LogOut } from "lucide-react";
 import {
@@ -12,16 +13,16 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { SidebarMenuButton } from "@/components/ui/sidebar";
+import { Button } from "@/components/ui/button";
 
 export default function LogoutButton() {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <SidebarMenuButton className="cursor-pointer group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:gap-0" size={"lg"}>
+        <Button variant="outline" className="w-full gap-2 cursor-pointer">
           <LogOut size={16} />
-          <span className="group-data-[collapsible=icon]:hidden">Logout</span>
-        </SidebarMenuButton>
+          Logout
+        </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
@@ -29,14 +30,14 @@ export default function LogoutButton() {
             Sicuro di voler eseguire il logout?
           </AlertDialogTitle>
           <AlertDialogDescription>
-            Se esegui il logout, dovrai effettuare nuovamente l'accesso per
+            Se esegui il logout, dovrai effettuare nuovamente l&apos;accesso per
             continuare a utilizzare il sito.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Annulla</AlertDialogCancel>
           <AlertDialogAction onClick={() => signOut({ callbackUrl: "/login" })}>
-            Si, va bene
+            Sì, va bene
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

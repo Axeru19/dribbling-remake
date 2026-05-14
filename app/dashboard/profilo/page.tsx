@@ -29,6 +29,7 @@ import {
   Loader2,
   Save,
 } from "lucide-react";
+import LogoutButton from "@/components/logout-button";
 
 // ─── Validation Schema ────────────────────────────────────────────────────────
 
@@ -460,6 +461,12 @@ export default function ProfiloPage() {
             </div>
           </form>
         </Form>
+
+        <Separator />
+
+        <div className="pb-4">
+          <LogoutButton />
+        </div>
       </div>
     </div>
   );

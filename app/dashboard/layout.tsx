@@ -1,18 +1,13 @@
-import AppSidebar from "@/components/AppSidebar";
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import { Separator } from "@/components/ui/separator";
-import { cookies, headers } from "next/headers";
 import React from "react";
 import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
 import { AppUser } from "@/types/types";
 import { authOptions } from "@/lib/auth";
-import Pathname from "@/components/pathname";
 import { Metadata } from "next";
 import { fields } from "@prisma/client";
 import { FieldsProvider } from "@/context/FieldsContex";
-import { SessionProvider } from "next-auth/react";
 import { SessionProviderWrapper } from "@/context/SessoionContex";
+import BottomNav from "@/components/BottomNav";
 
 export const metadata: Metadata = {
   title: {
@@ -33,48 +28,31 @@ export const metadata: Metadata = {
 export default async function layout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  const cookieStore = await cookies();
   const host = process.env.NEXTAUTH_URL;
-  const defaultOpen = cookieStore.get("sidebar_state")?.value === "true";
 
-  // prendo la sessione
   const session = await getServerSession(authOptions);
   const user: AppUser | null = session?.user || null;
 
   if (!user) {
-    // se non ho un utente loggato, reindirizzo al login
     redirect("/login");
   }
 
-  // get all the sport fields
   const fields: fields[] = await fetch(host + "/api/fields/list", {
     cache: "no-store",
   }).then((res) => res.json());
 
   return (
     <SessionProviderWrapper>
-      <SidebarProvider defaultOpen={defaultOpen}>
-        <AppSidebar user={user} />
-        <main className="flex flex-col w-full h-dvh overflow-hidden">
-          <header
-            className="flex shrink-0 gap-2 p-3 items-center w-full border-b"
-            style={{
-              paddingTop: "calc(0.75rem + env(safe-area-inset-top, 0px))",
-            }}
-          >
-            <SidebarTrigger />
-            <Separator
-              orientation="vertical"
-              className="mx-2 font-bold data-[orientation=vertical]:h-6"
-            />
-            <Pathname />
-          </header>
+      <main
+        className="flex flex-col w-full h-dvh overflow-hidden"
+        style={{ paddingTop: "env(safe-area-inset-top, 0px)" }}
+      >
+        <div className="flex-1 overflow-auto p-6 pb-24 w-full">
+          <FieldsProvider value={fields}>{children}</FieldsProvider>
+        </div>
 
-          <div className="flex-1 overflow-auto p-6 w-full">
-            <FieldsProvider value={fields}>{children}</FieldsProvider>
-          </div>
-        </main>
-      </SidebarProvider>
+        <BottomNav user={user} />
+      </main>
     </SessionProviderWrapper>
   );
 }

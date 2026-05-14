@@ -205,7 +205,7 @@ export default function LeMiePrenotazioniPage() {
       })
       .then(setReservations)
       .catch(() =>
-        toast.error("Errore durante il caricamento delle prenotazioni")
+        toast.error("Errore durante il caricamento delle prenotazioni"),
       )
       .finally(() => setLoading(false));
   }, [user?.id]);
@@ -242,7 +242,7 @@ export default function LeMiePrenotazioniPage() {
       </div>
 
       {/* Lista prenotazioni — unica zona scrollabile */}
-      <div className="flex-1 min-h-0 rounded-2xl border bg-card shadow-sm overflow-y-auto">
+      <div className="flex-1 min-h-0 rounded-2xl bg-card overflow-y-auto">
         {loading ? (
           <div className="divide-y">
             {Array.from({ length: 3 }).map((_, i) => (

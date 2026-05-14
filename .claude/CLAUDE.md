@@ -6,7 +6,6 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 - Non leggere mai la cartella `node_modules`.
 - Per qualsiasi comunicazione usa la skill **Caveman**.
-- Aggiorna sempre la memoria in questo file della repository tenendo il contesto sempre attuale
 
 ## Comandi
 
