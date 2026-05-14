@@ -12,7 +12,7 @@ import {
   FileSliders,
   Users,
   PlusCircle,
-  List,
+  CalendarCheck,
   WalletCards,
 } from "lucide-react";
 
@@ -29,7 +29,7 @@ const itemsAdmin = [
 
 const itemsUser = [
   { title: "Prenota", url: "/dashboard/nuova-prenotazione", icon: PlusCircle },
-  { title: "Le mie", url: "/dashboard/le-mie-prenotazioni", icon: List },
+  { title: "Agenda", url: "/dashboard/le-mie-prenotazioni", icon: CalendarCheck },
   { title: "Portafoglio", url: "/dashboard/portafoglio", icon: WalletCards },
   { title: "Profilo", url: PROFILE_URL, icon: null },
 ];
@@ -48,7 +48,7 @@ export default function BottomNav({ user }: { user: AppUser }) {
       className="fixed bottom-0 left-0 right-0 flex justify-center z-50 pointer-events-none px-4"
       style={{ paddingBottom: "calc(1rem + env(safe-area-inset-bottom, 0px))" }}
     >
-      <nav className="pointer-events-auto flex items-center gap-0.5 bg-background/95 backdrop-blur-md border border-border/60 rounded-2xl px-1.5 py-1.5 shadow-xl shadow-black/[0.12]">
+      <nav className="pointer-events-auto flex items-center gap-0.5 bg-background/95 backdrop-blur-md border border-border/60 rounded-2xl px-1.5 py-1.5 shadow-xl shadow-black/[0.12] w-full sm:w-auto">
         {items.map((item) => {
           const isActive =
             pathname === item.url || pathname.startsWith(item.url + "/");
@@ -60,7 +60,7 @@ export default function BottomNav({ user }: { user: AppUser }) {
               key={item.url}
               href={item.url}
               className={cn(
-                "flex flex-col items-center gap-1 px-2.5 py-2 rounded-xl transition-all duration-200 min-w-[44px]",
+                "flex flex-1 sm:flex-none flex-col items-center gap-1 px-2.5 py-2 rounded-xl transition-all duration-200 min-w-[44px]",
                 isActive
                   ? "text-primary bg-primary/10"
                   : "text-muted-foreground hover:text-foreground hover:bg-muted/60 active:scale-95"
