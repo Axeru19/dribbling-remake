@@ -133,6 +133,9 @@ function ReservationRow({ reservation, onDelete }: ReservationRowProps) {
           <span className="font-semibold text-sm">
             {reservation.description ?? "—"}
           </span>
+          <span className="text-[11px] font-mono text-muted-foreground/60">
+            #{reservation.id}
+          </span>
           <span
             className="text-[11px] font-semibold px-2 py-0.5 rounded-full"
             style={{
@@ -154,9 +157,6 @@ function ReservationRow({ reservation, onDelete }: ReservationRowProps) {
           <span className="flex items-center gap-1">
             <Users2 className="w-3 h-3 shrink-0" />
             {reservation.mixed ? "Squadre miste" : "Omogenee"}
-          </span>
-          <span className="text-muted-foreground/40 hidden sm:inline">
-            #{reservation.id}
           </span>
         </div>
 

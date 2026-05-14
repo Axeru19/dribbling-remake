@@ -62,7 +62,7 @@ function StepIndicator({
   onNavigate: (step: StepId) => void;
 }) {
   return (
-    <div className="flex items-center w-full gap-0 shrink-0">
+    <div className="flex items-center w-full px-5 gap-0 shrink-0">
       {STEPS.map((step, idx) => {
         const done = maxStep > step.id;
         const active = activeStep === step.id;
@@ -392,6 +392,9 @@ export default function NuovaPrenotazione() {
                   const dayNum = date.toLocaleDateString("it-IT", {
                     day: "numeric",
                   });
+                  const monthName = date.toLocaleDateString("it-IT", {
+                    month: "short",
+                  });
                   return (
                     <button
                       key={date.toDateString()}
@@ -435,11 +438,17 @@ export default function NuovaPrenotazione() {
                       >
                         {dayNum}
                       </span>
-                      {isToday && !isSelected && (
-                        <span className="text-[8px] font-black text-primary uppercase tracking-wide leading-none">
-                          Oggi
-                        </span>
-                      )}
+                      <span
+                        className={`text-[8px] font-bold uppercase tracking-wide leading-none ${
+                          isSelected
+                            ? "opacity-60"
+                            : isToday
+                              ? "text-primary font-black"
+                              : "text-muted-foreground"
+                        }`}
+                      >
+                        {monthName}
+                      </span>
                     </button>
                   );
                 })}
