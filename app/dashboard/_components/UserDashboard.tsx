@@ -37,6 +37,87 @@ function getGreeting(): string {
   return "Buonasera";
 }
 
+// ─── Hero Card ────────────────────────────────────────────────────────────────
+
+function HeroCard({
+  user,
+  wallet,
+  loading,
+}: {
+  user: AppUser;
+  wallet: WalletData | null;
+  loading: boolean;
+}) {
+  const balance =
+    wallet?.balance != null
+      ? new Intl.NumberFormat("it-IT", {
+          style: "currency",
+          currency: "EUR",
+          minimumFractionDigits: 2,
+        }).format(wallet.balance)
+      : null;
+
+  return (
+    <div
+      className="rounded-2xl overflow-hidden p-6 relative"
+      style={{
+        background:
+          "linear-gradient(145deg, oklch(0.14 0.025 258) 0%, oklch(0.18 0.02 252) 50%, oklch(0.15 0.03 272) 100%)",
+      }}
+    >
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background:
+            "radial-gradient(ellipse at 85% 10%, oklch(0.55 0.14 258 / 0.18) 0%, transparent 55%)",
+        }}
+      />
+
+      {/* Greeting */}
+      <div className="relative flex items-start justify-between gap-4">
+        <div>
+          <p className="text-[11px] text-white/35 capitalize tracking-wide">
+            {format(new Date(), "EEEE d MMMM", { locale: it })}
+          </p>
+          <h1 className="text-2xl font-bold text-white mt-1 tracking-tight">
+            {getGreeting()}, {user.name ?? user.nickname ?? ""}
+          </h1>
+        </div>
+        <div className="w-7 h-7 rounded-lg bg-white/10 border border-white/[0.08] flex items-center justify-center shrink-0 mt-0.5">
+          <Wallet className="w-3.5 h-3.5 text-white/60" />
+        </div>
+      </div>
+
+      {/* Wallet balance */}
+      <Link
+        href="/dashboard/portafoglio"
+        className="relative block mt-6 pt-5 border-t border-white/10 hover:opacity-70 transition-opacity active:scale-[0.99]"
+      >
+        <p className="text-[10px] font-semibold text-white/35 uppercase tracking-[0.12em]">
+          Portafoglio
+        </p>
+        {loading ? (
+          <div className="h-8 w-28 rounded-md bg-white/10 animate-pulse mt-1.5" />
+        ) : balance ? (
+          <p className="font-mono text-3xl font-bold text-white leading-none tracking-tight mt-1.5">
+            {balance}
+          </p>
+        ) : (
+          <p className="text-white/35 text-sm mt-1.5">Nessun portafoglio</p>
+        )}
+        {wallet?.wallet_id && (
+          <div className="flex items-center gap-1.5 mt-2">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+            <span className="text-[9px] font-semibold text-white/35 uppercase tracking-[0.12em]">
+              Attivo
+            </span>
+          </div>
+        )}
+      </Link>
+    </div>
+  );
+}
+
 // ─── Last Reservation ─────────────────────────────────────────────────────────
 
 function LastReservationCard({
@@ -48,14 +129,14 @@ function LastReservationCard({
 }) {
   if (loading) {
     return (
-      <div className="rounded-2xl border bg-card p-5 min-h-[130px] flex flex-col gap-4">
-        <div className="h-3 w-28 rounded-md bg-muted animate-pulse" />
+      <div className="rounded-2xl border bg-card p-5 flex flex-col gap-4 animate-pulse">
+        <div className="h-3 w-28 rounded-md bg-muted" />
         <div className="flex gap-4">
-          <div className="w-16 h-16 rounded-2xl bg-muted shrink-0 animate-pulse" />
+          <div className="w-16 h-16 rounded-2xl bg-muted shrink-0" />
           <div className="flex-1 flex flex-col gap-2.5 justify-center">
-            <div className="h-4 w-32 rounded-md bg-muted animate-pulse" />
-            <div className="h-3 w-20 rounded-md bg-muted animate-pulse" />
-            <div className="h-5 w-20 rounded-full bg-muted animate-pulse" />
+            <div className="h-4 w-36 rounded-md bg-muted" />
+            <div className="h-3 w-24 rounded-md bg-muted" />
+            <div className="h-5 w-20 rounded-full bg-muted" />
           </div>
         </div>
       </div>
@@ -64,7 +145,7 @@ function LastReservationCard({
 
   if (!reservation) {
     return (
-      <div className="rounded-2xl border bg-card p-6 min-h-[130px] flex flex-col justify-center gap-3">
+      <div className="rounded-2xl border bg-card p-6 flex flex-col justify-center gap-3">
         <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center">
           <Inbox className="w-5 h-5 text-muted-foreground" />
         </div>
@@ -117,7 +198,7 @@ function LastReservationCard({
         </div>
 
         <div className="flex-1 min-w-0">
-          <p className="font-semibold text-base leading-tight">
+          <p className="font-semibold text-base leading-tight truncate">
             {reservation.description ?? "—"}
           </p>
           <div className="flex items-center gap-1.5 text-xs text-muted-foreground mt-1.5">
@@ -140,73 +221,6 @@ function LastReservationCard({
   );
 }
 
-// ─── Wallet Card ──────────────────────────────────────────────────────────────
-
-function WalletCard({
-  wallet,
-  loading,
-}: {
-  wallet: WalletData | null;
-  loading: boolean;
-}) {
-  const balance =
-    wallet?.balance != null
-      ? new Intl.NumberFormat("it-IT", {
-          style: "currency",
-          currency: "EUR",
-          minimumFractionDigits: 2,
-        }).format(wallet.balance)
-      : null;
-
-  return (
-    <Link
-      href="/dashboard/portafoglio"
-      className="relative rounded-2xl overflow-hidden p-5 flex flex-col justify-between gap-6 min-h-[130px] hover:opacity-90 transition-opacity duration-150 active:scale-[0.98]"
-      style={{
-        background:
-          "linear-gradient(145deg, oklch(0.14 0.025 258) 0%, oklch(0.18 0.02 252) 50%, oklch(0.15 0.03 272) 100%)",
-      }}
-    >
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          background:
-            "radial-gradient(ellipse at 20% 90%, oklch(0.48 0.16 155 / 0.12) 0%, transparent 55%)",
-        }}
-      />
-
-      <div className="relative flex items-center gap-2">
-        <div className="w-6 h-6 rounded-md bg-white/10 border border-white/[0.08] flex items-center justify-center">
-          <Wallet className="w-3 h-3 text-white/70" />
-        </div>
-        <span className="text-[10px] font-semibold text-white/40 tracking-[0.12em] uppercase">
-          Portafoglio
-        </span>
-      </div>
-
-      <div className="relative">
-        {loading ? (
-          <div className="h-7 w-24 rounded-md bg-white/10 animate-pulse" />
-        ) : balance ? (
-          <p className="font-mono text-2xl font-bold text-white leading-none tracking-tight">
-            {balance}
-          </p>
-        ) : (
-          <p className="text-white/35 text-sm">Nessun portafoglio</p>
-        )}
-        {wallet?.wallet_id && (
-          <div className="flex items-center gap-1.5 mt-1.5">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-            <span className="text-[9px] font-semibold text-white/35 uppercase tracking-[0.12em]">
-              Attivo
-            </span>
-          </div>
-        )}
-      </div>
-    </Link>
-  );
-}
-
 // ─── Payments Section ─────────────────────────────────────────────────────────
 
 function PaymentsSection() {
@@ -221,7 +235,6 @@ function PaymentsSection() {
           Prossimamente
         </span>
       </div>
-      {/* Empty state hidden on mobile to prevent viewport overflow */}
       <div className="hidden sm:flex flex-col items-center gap-3 py-10 px-6 text-center">
         <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center">
           <CreditCard className="w-5 h-5 text-muted-foreground" />
@@ -270,21 +283,11 @@ export default function UserDashboard({ user }: { user: AppUser }) {
 
   return (
     <div className="flex flex-col gap-5 pb-4">
-      {/* Greeting */}
-      <div>
-        <p className="text-xs text-muted-foreground capitalize mb-0.5">
-          {format(new Date(), "EEEE d MMMM", { locale: it })}
-        </p>
-        <h1 className="text-2xl font-bold tracking-tight">
-          {getGreeting()}, {user.name ?? user.nickname ?? ""}
-        </h1>
-      </div>
+      {/* Hero: greeting + wallet */}
+      <HeroCard user={user} wallet={wallet} loading={loadingW} />
 
-      {/* Bento: last reservation + wallet */}
-      <div className="grid grid-cols-1 sm:grid-cols-[3fr_2fr] gap-4">
-        <LastReservationCard reservation={reservation} loading={loadingR} />
-        <WalletCard wallet={wallet} loading={loadingW} />
-      </div>
+      {/* Last reservation */}
+      <LastReservationCard reservation={reservation} loading={loadingR} />
 
       {/* CTA: Prenota */}
       <Link
@@ -297,7 +300,9 @@ export default function UserDashboard({ user }: { user: AppUser }) {
           </div>
           <div>
             <p className="font-semibold text-sm">Prenota una partita</p>
-            <p className="text-xs text-background/50 mt-0.5">Scegli campo, data e orario</p>
+            <p className="text-xs text-background/50 mt-0.5">
+              Scegli campo, data e orario
+            </p>
           </div>
         </div>
         <ArrowRight className="w-5 h-5 text-background/40 shrink-0 transition-transform duration-150 group-hover:translate-x-0.5" />
