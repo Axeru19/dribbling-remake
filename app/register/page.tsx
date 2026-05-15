@@ -53,11 +53,10 @@ export default function RegisterPage() {
             Nuova registrazione
           </div>
           <h1 className="text-4xl xl:text-5xl font-bold text-white leading-tight tracking-tight">
-            Benvenuto nel
+            Benvenuto al
             <br />
-            <span className="text-white/70">tuo centro</span>
+            <span className="text-white/70">Dribbling</span>
             <br />
-            sportivo.
           </h1>
           <p className="text-white/60 text-base leading-relaxed max-w-sm">
             Prenota i campi, gestisci le tue partite e tieni traccia dei tuoi

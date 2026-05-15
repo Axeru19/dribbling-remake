@@ -10,6 +10,7 @@ import {
   OctagonAlert,
   HandCoins,
   FileSliders,
+  Home,
   Users,
   PlusCircle,
   CalendarCheck,
@@ -19,19 +20,21 @@ import {
 const PROFILE_URL = "/dashboard/profilo";
 
 const itemsAdmin = [
-  { title: "Partite", url: "/dashboard/partite", icon: CalendarDays },
-  { title: "Prenotazioni", url: "/dashboard/prenotazioni", icon: OctagonAlert },
-  { title: "Pagamenti", url: "/dashboard/pagamenti", icon: HandCoins },
-  { title: "Campi", url: "/dashboard/campi", icon: FileSliders },
-  { title: "Utenti", url: "/dashboard/utenti", icon: Users },
-  { title: "Profilo", url: PROFILE_URL, icon: null },
+  { title: "Home", url: "/dashboard", icon: Home, exact: true },
+  { title: "Partite", url: "/dashboard/partite", icon: CalendarDays, exact: false },
+  { title: "Prenotazioni", url: "/dashboard/prenotazioni", icon: OctagonAlert, exact: false },
+  { title: "Pagamenti", url: "/dashboard/pagamenti", icon: HandCoins, exact: false },
+  { title: "Campi", url: "/dashboard/campi", icon: FileSliders, exact: false },
+  { title: "Utenti", url: "/dashboard/utenti", icon: Users, exact: false },
+  { title: "Profilo", url: PROFILE_URL, icon: null, exact: false },
 ];
 
 const itemsUser = [
-  { title: "Prenota", url: "/dashboard/nuova-prenotazione", icon: PlusCircle },
-  { title: "Agenda", url: "/dashboard/le-mie-prenotazioni", icon: CalendarCheck },
-  { title: "Portafoglio", url: "/dashboard/portafoglio", icon: WalletCards },
-  { title: "Profilo", url: PROFILE_URL, icon: null },
+  { title: "Home", url: "/dashboard", icon: Home, exact: true },
+  { title: "Prenota", url: "/dashboard/nuova-prenotazione", icon: PlusCircle, exact: false },
+  { title: "Agenda", url: "/dashboard/le-mie-prenotazioni", icon: CalendarCheck, exact: false },
+  { title: "Portafoglio", url: "/dashboard/portafoglio", icon: WalletCards, exact: false },
+  { title: "Profilo", url: PROFILE_URL, icon: null, exact: false },
 ];
 
 function getInitials(name?: string | null, surname?: string | null): string {
@@ -50,8 +53,9 @@ export default function BottomNav({ user }: { user: AppUser }) {
     >
       <nav className="pointer-events-auto flex items-center gap-0.5 bg-background/95 backdrop-blur-md border border-border/60 rounded-2xl px-1.5 py-1.5 shadow-xl shadow-black/[0.12] w-full sm:w-auto">
         {items.map((item) => {
-          const isActive =
-            pathname === item.url || pathname.startsWith(item.url + "/");
+          const isActive = item.exact
+            ? pathname === item.url
+            : pathname === item.url || pathname.startsWith(item.url + "/");
           const isProfile = item.url === PROFILE_URL;
           const Icon = item.icon;
 
