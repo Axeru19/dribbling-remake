@@ -2,44 +2,24 @@
 
 import React, { useState } from "react";
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
+  Drawer,
+  DrawerContent,
+  DrawerClose,
+  DrawerTrigger,
+  DrawerFooter,
+} from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import {
-  CalendarDays,
-  Clock,
-  Layers,
-  Users2,
-  FileText,
-  CalendarCheck,
-} from "lucide-react";
+import { CalendarCheck, ShieldCheck, Users2, FileText } from "lucide-react";
 import { reservations, fields } from "@prisma/client";
 import { useFields } from "@/context/FieldsContex";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { normalizeIds } from "@/utils/normalizeIds";
 
-// ─── Types ────────────────────────────────────────────────────────────────────
-
 interface ConfirmNewReservationButtonProps {
-  /**
-   * La prenotazione costruita dal form. Sarà null se il form non è
-   * ancora completo (campo, data o orario mancanti): in quel caso
-   * il pulsante mostra lo stato delle selezioni mancanti.
-   */
   reservation: Omit<reservations, "id"> | null;
 }
-
-// ─── Componente ───────────────────────────────────────────────────────────────
 
 export default function ConfirmNewReservationButton({
   reservation,
@@ -47,14 +27,11 @@ export default function ConfirmNewReservationButton({
   const allFields = useFields() as fields[];
   const router = useRouter();
   const [sending, setSending] = useState(false);
+  const [open, setOpen] = useState(false);
 
-  /** Invia la prenotazione al backend. */
   function sendReservation() {
     if (!reservation) return;
-
     setSending(true);
-
-    // Normalizza i timestamp in UTC locale prima di serializzare
     const payload = {
       ...reservation,
       date: new Date(
@@ -70,7 +47,6 @@ export default function ConfirmNewReservationButton({
           reservation.end_time!.getTimezoneOffset() * 60000,
       ),
     };
-
     fetch("/api/reservations/send", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -83,6 +59,7 @@ export default function ConfirmNewReservationButton({
       })
       .then(() => {
         toast.success("Prenotazione inviata con successo!");
+        setOpen(false);
         router.push("/dashboard/le-mie-prenotazioni");
       })
       .catch((err: Error) => {
@@ -93,25 +70,23 @@ export default function ConfirmNewReservationButton({
       .finally(() => setSending(false));
   }
 
-  // Dati da mostrare nel dialog di riepilogo
   const fieldName =
     allFields.find((f) => f.id === reservation?.id_field)?.description ?? "—";
-  const dateLabel =
+  const shortDate =
     reservation?.date?.toLocaleDateString("it-IT", {
-      weekday: "long",
+      weekday: "short",
       day: "numeric",
-      month: "long",
+      month: "short",
     }) ?? "—";
   const startLabel =
     reservation?.start_time?.toTimeString().substring(0, 5) ?? "—";
   const endLabel = reservation?.end_time?.toTimeString().substring(0, 5) ?? "—";
 
-  // Il pulsante è disabilitato finché il form non è completo
   const isDisabled = reservation === null;
 
   return (
-    <AlertDialog>
-      <AlertDialogTrigger asChild>
+    <Drawer open={open} onOpenChange={setOpen}>
+      <DrawerTrigger asChild>
         <Button
           disabled={isDisabled}
           className={[
@@ -124,117 +99,110 @@ export default function ConfirmNewReservationButton({
           <CalendarCheck className="w-4 h-4 shrink-0" />
           Conferma prenotazione
         </Button>
-      </AlertDialogTrigger>
+      </DrawerTrigger>
 
-      {/* Dialog di riepilogo — visibile solo se il form è completo */}
       {reservation && (
-        <AlertDialogContent className="max-w-md">
-          <AlertDialogHeader>
-            <AlertDialogTitle className="flex items-center gap-2 text-lg">
-              <CalendarCheck className="w-5 h-5 text-primary" />
+        <DrawerContent>
+          {/* Header */}
+          <div className="px-5 pt-5 pb-6">
+            <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center mb-4">
+              <CalendarCheck className="w-7 h-7 text-primary" />
+            </div>
+            <h2 className="text-lg font-bold text-foreground leading-tight">
               Confermi la prenotazione?
-            </AlertDialogTitle>
-            <AlertDialogDescription asChild>
-              {/* Riepilogo visivo coerente con il design della pagina */}
-              <div className="flex flex-col gap-4 pt-1">
-                <p className="text-sm text-muted-foreground">
-                  Controlla i dati prima di confermare. Potrai annullare entro
-                  2h dall&apos;appuntamento.
-                </p>
+            </h2>
+            <p className="text-sm text-muted-foreground mt-1 leading-snug">
+              Controlla i dettagli prima di procedere.
+            </p>
+          </div>
 
-                <div className="rounded-xl border bg-accent/30 p-4 flex flex-col gap-3">
-                  {/* Campo */}
-                  <SummaryRow icon={Layers} label="Campo" value={fieldName} />
+          {/* Key facts grid */}
+          <div className="px-5 pb-5">
+            <div className="rounded-2xl border border-border/50 bg-accent/30 overflow-hidden">
+              <div className="grid grid-cols-3 divide-x divide-border/50">
+                <FactCell label="Campo" value={fieldName} />
+                <FactCell label="Giorno" value={shortDate} />
+                <FactCell label="Orario" value={`${startLabel}–${endLabel}`} />
+              </div>
+            </div>
+          </div>
 
-                  {/* Data */}
-                  <SummaryRow
-                    icon={CalendarDays}
-                    label="Giorno"
-                    value={dateLabel}
-                  />
+          {/* Secondary info */}
+          <div className="px-5 pb-2">
+            <div className="flex items-center justify-between py-3 border-t border-border/40">
+              <span className="text-sm text-muted-foreground flex items-center gap-2">
+                <Users2 className="w-3.5 h-3.5 shrink-0" />
+                Squadre miste
+              </span>
+              <Badge
+                variant={reservation.mixed ? "default" : "secondary"}
+                className="text-xs"
+              >
+                {reservation.mixed ? "Sì" : "No"}
+              </Badge>
+            </div>
 
-                  {/* Orario */}
-                  <SummaryRow
-                    icon={Clock}
-                    label="Orario"
-                    value={`${startLabel} – ${endLabel}`}
-                  />
-
-                  {/* Squadre miste */}
-                  <SummaryRow
-                    icon={Users2}
-                    label="Squadre miste"
-                    value={
-                      reservation.mixed ? (
-                        <Badge
-                          variant="secondary"
-                          className="text-xs font-medium"
-                        >
-                          Sì
-                        </Badge>
-                      ) : (
-                        <span className="text-muted-foreground text-sm">
-                          No
-                        </span>
-                      )
-                    }
-                  />
-
-                  {/* Note (solo se presenti) */}
-                  {reservation.notes && (
-                    <SummaryRow
-                      icon={FileText}
-                      label="Note"
-                      value={reservation.notes}
-                    />
-                  )}
+            {reservation.notes && (
+              <div className="flex items-start gap-2 py-3 border-t border-border/40">
+                <FileText className="w-3.5 h-3.5 shrink-0 text-muted-foreground mt-0.5" />
+                <div>
+                  <p className="text-xs text-muted-foreground font-medium mb-0.5">
+                    Note
+                  </p>
+                  <p className="text-sm text-foreground break-words">
+                    {reservation.notes}
+                  </p>
                 </div>
               </div>
-            </AlertDialogDescription>
-          </AlertDialogHeader>
+            )}
+          </div>
 
-          <AlertDialogFooter className="gap-2">
-            <AlertDialogCancel disabled={sending}>Annulla</AlertDialogCancel>
-            <AlertDialogAction
-              disabled={sending}
+          {/* Footer */}
+          <DrawerFooter className="px-5 pt-3 pb-8 gap-2">
+            <div className="flex items-center gap-1.5 text-xs text-muted-foreground/70 justify-center pb-1">
+              <ShieldCheck className="w-3.5 h-3.5 shrink-0" />
+              <span>Potrai annullare fino a 2h prima</span>
+            </div>
+            <Button
+              size="lg"
+              className="w-full h-12 gap-2 font-semibold shadow-md active:scale-[0.98] transition-transform"
               onClick={sendReservation}
-              className="gap-2"
+              disabled={sending}
             >
-              {sending ? "Invio in corso..." : "Conferma"}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
+              {sending ? (
+                "Invio in corso..."
+              ) : (
+                <>
+                  <CalendarCheck className="w-4 h-4 shrink-0" />
+                  Conferma prenotazione
+                </>
+              )}
+            </Button>
+            <DrawerClose asChild>
+              <Button
+                variant="ghost"
+                className="w-full h-10 text-muted-foreground"
+                disabled={sending}
+              >
+                Annulla
+              </Button>
+            </DrawerClose>
+          </DrawerFooter>
+        </DrawerContent>
       )}
-    </AlertDialog>
+    </Drawer>
   );
 }
 
-// ─── SummaryRow ───────────────────────────────────────────────────────────────
-
-interface SummaryRowProps {
-  icon: React.ElementType;
-  label: string;
-  value: React.ReactNode;
-}
-
-/**
- * Riga del riepilogo nel dialog di conferma.
- * Mostra un'icona, un'etichetta e il valore corrispondente.
- */
-function SummaryRow({ icon: Icon, label, value }: SummaryRowProps) {
+function FactCell({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex items-start gap-3">
-      <div className="p-1.5 rounded-md bg-primary/10 text-primary shrink-0 mt-0.5">
-        <Icon className="w-3.5 h-3.5" />
-      </div>
-      <div className="flex-1 min-w-0">
-        <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide leading-none mb-0.5">
-          {label}
-        </p>
-        <div className="text-sm font-medium text-foreground break-words">
-          {value}
-        </div>
-      </div>
+    <div className="flex flex-col gap-1 px-3 py-3.5">
+      <p className="text-[9px] text-muted-foreground font-semibold uppercase tracking-widest leading-none">
+        {label}
+      </p>
+      <p className="text-sm font-bold text-foreground leading-snug break-words">
+        {value}
+      </p>
     </div>
   );
 }

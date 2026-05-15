@@ -1,27 +1,14 @@
 "use client";
 
-/**
- * UserDialog
- *
- * Dialog per la visualizzazione e modifica di tutti i dati di un utente.
- * Si articola in tre sezioni:
- *   1. Portafoglio — saldo attuale + input ricarica
- *   2. Profilo     — campi anagrafici (nome, cognome, nickname, telefono, email)
- *   3. Sicurezza   — cambio password con banner avviso
- *
- * La logica di submit, ricarica wallet e gestione errori è invariata.
- */
-
 import React from "react";
 import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "./ui/dialog";
+  Drawer,
+  DrawerContent,
+  DrawerClose,
+  DrawerFooter,
+  DrawerTitle,
+  DrawerDescription,
+} from "./ui/drawer";
 import { Button } from "./ui/button";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -60,7 +47,6 @@ type FormValues = z.infer<typeof formSchema>;
 
 // ─── Helpers ───────────────────────────────────────────────────────────────
 
-/** Hue deterministico da stringa */
 function stringToHue(str: string): number {
   let hash = 0;
   for (let i = 0; i < str.length; i++) {
@@ -95,10 +81,7 @@ export default function UserDialog({
   setDialogOpen,
   setReload,
 }: UserDialogProps) {
-  // Il dialog non viene renderizzato se chiuso (performance)
   if (!dialogOpen) return null;
-
-  // ── Handlers — logica invariata ─────────────────────────────────────────
 
   function onSubmit(data: FormValues) {
     const { topUpAmount, ...userData } = data;
@@ -141,8 +124,6 @@ export default function UserDialog({
       .catch(() => toast.error("Errore durante la ricarica del portafoglio."));
   }
 
-  // ── Form ────────────────────────────────────────────────────────────────
-
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     mode: "onChange",
@@ -156,60 +137,51 @@ export default function UserDialog({
     },
   });
 
-  // Avatar colors
   const hue = stringToHue(`${user.name ?? ""}${user.surname ?? ""}`);
   const avatarBg = `hsl(${hue}, 55%, 92%)`;
   const avatarFg = `hsl(${hue}, 50%, 32%)`;
 
   return (
-    <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-      <DialogContent
-        className="sm:max-w-lg p-0 gap-0 overflow-hidden"
-        onOpenAutoFocus={(e) => e.preventDefault()}
-      >
-        {/* ── Hero header ──────────────────────────────────────────────── */}
-        <DialogHeader className="px-6 pt-6 pb-5 border-b border-border">
-          <div className="flex items-center gap-4">
-            {/* Avatar grande */}
-            <div
-              className="flex items-center justify-center size-14 rounded-2xl text-xl font-bold shrink-0 shadow-sm ring-2 ring-background"
-              style={{ backgroundColor: avatarBg, color: avatarFg }}
-            >
-              {getInitials(user.name, user.surname)}
-            </div>
-
-            <div className="flex-1 min-w-0">
-              <DialogTitle className="text-base font-bold leading-tight truncate">
-                {user.name} {user.surname}
-              </DialogTitle>
-              {user.nickname && (
-                <p className="text-xs text-muted-foreground mt-0.5">
-                  @{user.nickname}
-                </p>
-              )}
-            </div>
+    <Drawer open={dialogOpen} onOpenChange={setDialogOpen}>
+      <DrawerContent className="max-h-[90vh]">
+        {/* ── Header ─────────────────────────────────────────────────────── */}
+        <div className="px-5 pt-5 pb-5 border-b border-border flex items-center gap-4 shrink-0">
+          <div
+            className="flex items-center justify-center size-14 rounded-2xl text-xl font-bold shrink-0 shadow-sm"
+            style={{ backgroundColor: avatarBg, color: avatarFg }}
+          >
+            {getInitials(user.name, user.surname)}
           </div>
-          <DialogDescription className="sr-only">
+          <div className="flex-1 min-w-0">
+            <DrawerTitle className="text-base font-bold leading-tight truncate text-left">
+              {user.name} {user.surname}
+            </DrawerTitle>
+            {user.nickname && (
+              <p className="text-xs text-muted-foreground mt-0.5">
+                @{user.nickname}
+              </p>
+            )}
+          </div>
+          <DrawerDescription className="sr-only">
             Modifica i dati del profilo e il saldo del portafoglio.
-          </DialogDescription>
-        </DialogHeader>
+          </DrawerDescription>
+        </div>
 
-        {/* ── Corpo scrollabile ─────────────────────────────────────────── */}
-        <div className="overflow-y-auto max-h-[65vh]">
+        {/* ── Corpo scrollabile ──────────────────────────────────────────── */}
+        <div className="overflow-y-auto flex-1">
           <Form {...form}>
             <form
               id="user-edit-form"
               onSubmit={form.handleSubmit(onSubmit)}
               className="flex flex-col gap-0"
             >
-              {/* ── Sezione 1: Portafoglio ─────────────────────────────── */}
-              <section className="px-6 py-5 bg-muted/30">
+              {/* ── Portafoglio ───────────────────────────────────────── */}
+              <section className="px-5 py-5 bg-muted/30">
                 <div className="flex items-center gap-2 mb-4">
                   <Wallet className="size-4 text-primary" />
                   <h3 className="text-sm font-semibold text-foreground">
                     Portafoglio
                   </h3>
-                  {/* Saldo corrente */}
                   <span className="ml-auto inline-flex items-center rounded-full bg-emerald-50 dark:bg-emerald-950 px-2.5 py-0.5 text-xs font-semibold text-emerald-700 dark:text-emerald-300">
                     {formatEUR(user.balance)}
                   </span>
@@ -245,11 +217,10 @@ export default function UserDialog({
                 </div>
               </section>
 
-              {/* Divider sezione */}
               <div className="border-t border-border" />
 
-              {/* ── Sezione 2: Profilo ────────────────────────────────── */}
-              <section className="px-6 py-5">
+              {/* ── Dati profilo ──────────────────────────────────────── */}
+              <section className="px-5 py-5">
                 <div className="flex items-center gap-2 mb-4">
                   <div className="size-1.5 rounded-full bg-primary" />
                   <h3 className="text-sm font-semibold text-foreground">
@@ -258,7 +229,6 @@ export default function UserDialog({
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
-                  {/* Nome */}
                   <FormField
                     control={form.control}
                     name="name"
@@ -270,8 +240,6 @@ export default function UserDialog({
                       </FormItem>
                     )}
                   />
-
-                  {/* Cognome */}
                   <FormField
                     control={form.control}
                     name="surname"
@@ -283,8 +251,6 @@ export default function UserDialog({
                       </FormItem>
                     )}
                   />
-
-                  {/* Nickname */}
                   <FormField
                     control={form.control}
                     name="nickname"
@@ -296,8 +262,6 @@ export default function UserDialog({
                       </FormItem>
                     )}
                   />
-
-                  {/* Telefono */}
                   <FormField
                     control={form.control}
                     name="telephone"
@@ -309,8 +273,6 @@ export default function UserDialog({
                       </FormItem>
                     )}
                   />
-
-                  {/* Email — full width */}
                   <FormField
                     control={form.control}
                     name="email"
@@ -329,11 +291,10 @@ export default function UserDialog({
                 </div>
               </section>
 
-              {/* Divider sezione */}
               <div className="border-t border-border" />
 
-              {/* ── Sezione 3: Sicurezza ─────────────────────────────── */}
-              <section className="px-6 py-5">
+              {/* ── Sicurezza ─────────────────────────────────────────── */}
+              <section className="px-5 py-5">
                 <div className="flex items-center gap-2 mb-4">
                   <KeyRound className="size-4 text-primary" />
                   <h3 className="text-sm font-semibold text-foreground">
@@ -341,7 +302,6 @@ export default function UserDialog({
                   </h3>
                 </div>
 
-                {/* Banner avviso password */}
                 <div className="flex items-start gap-3 rounded-lg border border-amber-200 bg-amber-50 dark:border-amber-800 dark:bg-amber-950/40 px-4 py-3 mb-4">
                   <ShieldAlert className="size-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
                   <p className="text-xs text-amber-700 dark:text-amber-300 leading-relaxed">
@@ -370,19 +330,27 @@ export default function UserDialog({
           </Form>
         </div>
 
-        {/* ── Footer ────────────────────────────────────────────────────── */}
-        <DialogFooter className="px-6 py-4 border-t border-border bg-muted/20">
-          <DialogClose asChild>
-            <Button variant="outline" className="sm:mr-auto">
-              Chiudi
-            </Button>
-          </DialogClose>
-          <Button type="submit" form="user-edit-form" className="gap-2">
+        {/* ── Footer ─────────────────────────────────────────────────────── */}
+        <DrawerFooter className="px-5 pt-4 pb-8 border-t border-border bg-muted/20 gap-2 shrink-0">
+          <Button
+            type="submit"
+            form="user-edit-form"
+            size="lg"
+            className="w-full h-12 gap-2 font-semibold active:scale-[0.98] transition-transform"
+          >
             <Save className="size-4" />
             Salva modifiche
           </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+          <DrawerClose asChild>
+            <Button
+              variant="ghost"
+              className="w-full h-10 text-muted-foreground"
+            >
+              Chiudi
+            </Button>
+          </DrawerClose>
+        </DrawerFooter>
+      </DrawerContent>
+    </Drawer>
   );
 }

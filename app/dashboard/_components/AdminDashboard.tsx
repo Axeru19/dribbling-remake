@@ -11,7 +11,7 @@ import {
   ArrowRight,
   CalendarDays,
   ChevronRight,
-  Clock,
+  LayoutGrid,
 } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -43,6 +43,110 @@ function getGreeting(): string {
   return "Buonasera";
 }
 
+// ─── Hero Card ────────────────────────────────────────────────────────────────
+
+function HeroCard({
+  user,
+  incomingCount,
+  todayCount,
+  activeFields,
+  totalFields,
+  loadingIncoming,
+  loadingToday,
+  loadingFields,
+}: {
+  user: AppUser;
+  incomingCount: number;
+  todayCount: number;
+  activeFields: number;
+  totalFields: number;
+  loadingIncoming: boolean;
+  loadingToday: boolean;
+  loadingFields: boolean;
+}) {
+  return (
+    <div
+      className="rounded-2xl overflow-hidden p-6 relative"
+      style={{
+        background:
+          "linear-gradient(145deg, oklch(0.14 0.025 258) 0%, oklch(0.18 0.02 252) 50%, oklch(0.15 0.03 272) 100%)",
+      }}
+    >
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background:
+            "radial-gradient(ellipse at 85% 10%, oklch(0.55 0.14 258 / 0.18) 0%, transparent 55%)",
+        }}
+      />
+
+      {/* Greeting */}
+      <div className="relative">
+        <p className="text-[11px] text-white/35 capitalize tracking-wide">
+          {format(new Date(), "EEEE d MMMM", { locale: it })}
+        </p>
+        <h1 className="text-2xl font-bold text-white mt-1 tracking-tight">
+          {getGreeting()},{" "}
+          {user.name ?? user.nickname ?? "Amministratore"}
+        </h1>
+      </div>
+
+      {/* Stats */}
+      <div className="relative grid grid-cols-3 divide-x divide-white/10 mt-6 pt-5 border-t border-white/10">
+        <Link
+          href="/dashboard/prenotazioni"
+          className="pr-4 hover:opacity-70 transition-opacity"
+        >
+          {loadingIncoming ? (
+            <div className="h-7 w-10 rounded-md bg-white/10 animate-pulse mb-1" />
+          ) : (
+            <p
+              className={cn(
+                "text-2xl font-bold tabular-nums leading-none",
+                incomingCount > 0 ? "text-amber-400" : "text-white",
+              )}
+            >
+              {incomingCount}
+            </p>
+          )}
+          <p className="text-xs text-white/35 mt-1.5">in attesa</p>
+        </Link>
+
+        <Link
+          href="/dashboard/partite"
+          className="px-4 hover:opacity-70 transition-opacity"
+        >
+          {loadingToday ? (
+            <div className="h-7 w-10 rounded-md bg-white/10 animate-pulse mb-1" />
+          ) : (
+            <p className="text-2xl font-bold tabular-nums leading-none text-white">
+              {todayCount}
+            </p>
+          )}
+          <p className="text-xs text-white/35 mt-1.5">oggi</p>
+        </Link>
+
+        <Link
+          href="/dashboard/campi"
+          className="pl-4 hover:opacity-70 transition-opacity"
+        >
+          {loadingFields ? (
+            <div className="h-7 w-14 rounded-md bg-white/10 animate-pulse mb-1" />
+          ) : (
+            <p className="text-2xl font-bold tabular-nums leading-none">
+              <span className="text-emerald-400">{activeFields}</span>
+              <span className="text-base font-medium text-white/25">
+                /{totalFields}
+              </span>
+            </p>
+          )}
+          <p className="text-xs text-white/35 mt-1.5">campi attivi</p>
+        </Link>
+      </div>
+    </div>
+  );
+}
+
 // ─── Today's Reservations ─────────────────────────────────────────────────────
 
 function TodayReservations({
@@ -57,9 +161,11 @@ function TodayReservations({
       new Date(a.start_time).getTime() - new Date(b.start_time).getTime(),
   );
 
+  const nowMins = new Date().getHours() * 60 + new Date().getMinutes();
+
   return (
-    <div className="rounded-2xl border bg-card overflow-hidden">
-      <div className="flex items-center justify-between px-5 py-4 border-b">
+    <div className="rounded-2xl border bg-card overflow-hidden flex flex-col h-full">
+      <div className="flex items-center justify-between px-5 py-4 border-b shrink-0">
         <div>
           <p className="font-semibold text-sm">Prenotazioni oggi</p>
           <p className="text-[11px] text-muted-foreground capitalize mt-0.5">
@@ -76,36 +182,42 @@ function TodayReservations({
       </div>
 
       {loading ? (
-        <div className="divide-y">
-          {Array.from({ length: 3 }).map((_, i) => (
+        <div className="p-3 flex flex-col gap-1.5">
+          {Array.from({ length: 4 }).map((_, i) => (
             <div
               key={i}
-              className="flex items-center gap-4 px-5 py-3.5 animate-pulse"
+              className="flex items-center gap-3 rounded-xl px-4 py-3 animate-pulse"
             >
-              <div className="w-8 h-8 rounded-xl bg-muted shrink-0" />
+              <div className="w-11 h-8 rounded-lg bg-muted shrink-0" />
+              <div className="w-1.5 h-1.5 rounded-full bg-muted shrink-0" />
               <div className="flex-1 space-y-1.5">
                 <div className="h-3.5 w-28 rounded-md bg-muted" />
-                <div className="h-3 w-40 rounded-md bg-muted" />
+                <div className="h-3 w-20 rounded-md bg-muted" />
               </div>
               <div className="h-5 w-16 rounded-full bg-muted" />
             </div>
           ))}
         </div>
       ) : sorted.length === 0 ? (
-        <div className="flex flex-col items-center justify-center gap-3 py-10 text-center">
+        <div className="flex flex-col items-center justify-center gap-3 py-14 text-center flex-1">
           <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center">
             <CalendarDays className="w-5 h-5 text-muted-foreground" />
           </div>
           <div>
             <p className="font-semibold text-sm">Nessuna prenotazione oggi</p>
             <p className="text-xs text-muted-foreground mt-0.5">
-              Niente in programma per oggi
+              Giornata libera
             </p>
           </div>
         </div>
       ) : (
-        <div className="divide-y">
-          {sorted.slice(0, 3).map((r) => {
+        <div className="p-3 flex flex-col gap-1.5">
+          {sorted.map((r) => {
+            const endMins =
+              new Date(r.end_time).getUTCHours() * 60 +
+              new Date(r.end_time).getUTCMinutes();
+            const isPast = nowMins > endMins;
+
             const startLabel = new Date(r.start_time)
               .toISOString()
               .split("T")[1]
@@ -123,27 +235,42 @@ function TodayReservations({
               <Link
                 key={r.id}
                 href={`/dashboard/partite/${r.id}`}
-                className="flex items-center gap-4 px-5 py-3.5 hover:bg-muted/30 transition-colors group"
+                className={cn(
+                  "flex items-center gap-3 rounded-xl px-4 py-3 transition-colors group",
+                  isPast
+                    ? "opacity-40 hover:opacity-65 hover:bg-muted/30"
+                    : "hover:bg-muted/50",
+                )}
               >
-                <div
-                  className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0"
-                  style={{ backgroundColor: `${meta.color}18` }}
-                >
-                  <Clock className="w-4 h-4" style={{ color: meta.color }} />
+                {/* Time column */}
+                <div className="w-11 shrink-0 text-right">
+                  <p className="font-mono text-[13px] font-bold leading-none tabular-nums text-foreground">
+                    {startLabel}
+                  </p>
+                  <p className="font-mono text-[10px] text-muted-foreground leading-none mt-0.5 tabular-nums">
+                    {endLabel}
+                  </p>
                 </div>
+
+                {/* Status dot */}
+                <div
+                  className="w-1.5 h-1.5 rounded-full shrink-0"
+                  style={{ backgroundColor: `${meta.color}90` }}
+                />
+
+                {/* Info */}
                 <div className="flex-1 min-w-0">
                   <p className="font-medium text-sm truncate">
                     {r.surname
                       ? r.name + " " + r.surname
                       : r.user_not_registered}
                   </p>
-                  <p className="text-xs text-muted-foreground">
-                    {r.description ?? "—"} ·{" "}
-                    <span className="font-mono">
-                      {startLabel}–{endLabel}
-                    </span>
+                  <p className="text-xs text-muted-foreground truncate">
+                    {r.description ?? "—"}
                   </p>
                 </div>
+
+                {/* Status badge */}
                 <span
                   className="text-[10px] font-semibold px-2 py-0.5 rounded-full shrink-0"
                   style={{
@@ -156,12 +283,12 @@ function TodayReservations({
               </Link>
             );
           })}
-          {sorted.length > 3 && (
+          {sorted.length > 6 && (
             <Link
               href="/dashboard/partite"
-              className="flex items-center justify-center gap-1.5 px-5 py-3 text-xs font-semibold text-muted-foreground hover:text-foreground hover:bg-muted/30 transition-colors"
+              className="flex items-center justify-center gap-1.5 px-4 py-2.5 text-xs font-semibold text-muted-foreground hover:text-foreground hover:bg-muted/40 rounded-xl transition-colors mt-0.5"
             >
-              Vedi tutte le {sorted.length} prenotazioni
+              Tutte le {sorted.length}
               <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           )}
@@ -180,12 +307,18 @@ function FieldsOverview({
   fieldList: fields[];
   loading: boolean;
 }) {
+  const sorted = [...fieldList].sort((a, b) => a.id - b.id);
+  const activeCount = fieldList.filter((f) => Boolean(f.status)).length;
+
   return (
-    <div className="rounded-2xl border bg-card overflow-hidden">
-      <div className="flex items-center justify-between px-5 py-3.5 border-b">
-        <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-[0.1em]">
-          Campi
-        </p>
+    <div className="rounded-2xl border bg-card overflow-hidden flex flex-col h-full">
+      <div className="flex items-center justify-between px-5 py-4 border-b shrink-0">
+        <div>
+          <p className="font-semibold text-sm">Campi</p>
+          <p className="text-[11px] text-muted-foreground mt-0.5">
+            {loading ? "..." : `${activeCount} di ${fieldList.length} attivi`}
+          </p>
+        </div>
         <Link
           href="/dashboard/campi"
           className="text-xs font-semibold text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1"
@@ -195,100 +328,75 @@ function FieldsOverview({
         </Link>
       </div>
 
-      {/* Mobile: compact pills */}
-      <div className="sm:hidden p-4 flex flex-wrap gap-2">
-        {loading ? (
-          Array.from({ length: 3 }).map((_, i) => (
+      {loading ? (
+        <div className="p-4 flex flex-col gap-2.5">
+          {Array.from({ length: 3 }).map((_, i) => (
             <div
               key={i}
-              className="h-7 w-20 rounded-full bg-muted animate-pulse"
+              className="h-[60px] rounded-xl bg-muted animate-pulse"
             />
-          ))
-        ) : fieldList.length === 0 ? (
+          ))}
+        </div>
+      ) : sorted.length === 0 ? (
+        <div className="flex flex-col items-center justify-center gap-3 py-10 text-center flex-1">
+          <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center">
+            <LayoutGrid className="w-5 h-5 text-muted-foreground" />
+          </div>
           <p className="text-sm text-muted-foreground">
             Nessun campo configurato
           </p>
-        ) : (
-          [...fieldList]
-            .sort((a, b) => a.id - b.id)
-            .map((field) => {
-              const isActive = Boolean(field.status);
-              return (
-                <span
-                  key={field.id}
+        </div>
+      ) : (
+        <div className="p-4 flex flex-col gap-2">
+          {sorted.map((field) => {
+            const isActive = Boolean(field.status);
+            return (
+              <Link
+                key={field.id}
+                href="/dashboard/campi"
+                className={cn(
+                  "rounded-xl border px-4 py-3.5 transition-colors flex items-center gap-3",
+                  isActive
+                    ? "border-emerald-100 dark:border-emerald-900/40 bg-emerald-50/40 dark:bg-emerald-950/20 hover:bg-emerald-50/70 dark:hover:bg-emerald-950/30"
+                    : "border-border bg-muted/20 opacity-50 hover:opacity-70",
+                )}
+              >
+                <div
                   className={cn(
-                    "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border",
+                    "w-2 h-2 rounded-full shrink-0",
                     isActive
-                      ? "border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-800 dark:bg-emerald-950/30 dark:text-emerald-400"
-                      : "border-border bg-muted/30 text-muted-foreground opacity-60",
+                      ? "bg-emerald-500"
+                      : "bg-zinc-400 dark:bg-zinc-600",
                   )}
-                >
-                  <span
+                />
+                <div className="flex-1 min-w-0">
+                  <p className="font-medium text-sm truncate">
+                    {field.description ?? `Campo ${field.id}`}
+                  </p>
+                  <p
                     className={cn(
-                      "w-1.5 h-1.5 rounded-full shrink-0",
+                      "text-[11px] mt-0.5",
                       isActive
-                        ? "bg-emerald-500"
-                        : "bg-zinc-300 dark:bg-zinc-600",
-                    )}
-                  />
-                  {field.description ?? `Campo ${field.id}`}
-                </span>
-              );
-            })
-        )}
-      </div>
-
-      {/* Desktop: full card grid */}
-      <div className="hidden sm:block">
-        {loading ? (
-          <div className="p-4 grid grid-cols-2 gap-2.5">
-            {Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="h-14 rounded-xl bg-muted animate-pulse" />
-            ))}
-          </div>
-        ) : fieldList.length === 0 ? (
-          <div className="flex items-center justify-center py-8">
-            <p className="text-sm text-muted-foreground">
-              Nessun campo configurato
-            </p>
-          </div>
-        ) : (
-          <div className="p-4 grid grid-cols-2 gap-2.5">
-            {[...fieldList]
-              .sort((a, b) => a.id - b.id)
-              .map((field) => {
-                const isActive = Boolean(field.status);
-                return (
-                  <div
-                    key={field.id}
-                    className={cn(
-                      "rounded-xl border px-4 py-3 transition-colors duration-150",
-                      isActive
-                        ? "border-emerald-100 dark:border-emerald-900/40 bg-emerald-50/50 dark:bg-emerald-950/20"
-                        : "border-border bg-muted/20 opacity-50",
+                        ? "text-emerald-600 dark:text-emerald-400"
+                        : "text-muted-foreground",
                     )}
                   >
-                    <p className="font-medium text-sm truncate">
-                      {field.description ?? `Campo ${field.id}`}
-                    </p>
-                    <p
-                      className={cn(
-                        "text-[11px] mt-0.5",
-                        isActive
-                          ? "text-emerald-600 dark:text-emerald-400"
-                          : "text-muted-foreground",
-                      )}
-                    >
-                      {isActive
-                        ? `Attivo${field.price_per_hour != null ? ` · €${field.price_per_hour.toFixed(0)}/h` : ""}`
-                        : "Non disponibile"}
-                    </p>
-                  </div>
-                );
-              })}
-          </div>
-        )}
-      </div>
+                    {isActive ? "Attivo" : "Non disponibile"}
+                  </p>
+                </div>
+                {isActive && field.price_per_hour != null && (
+                  <span className="text-sm font-semibold tabular-nums text-foreground shrink-0">
+                    €{field.price_per_hour.toFixed(0)}
+                    <span className="text-xs font-normal text-muted-foreground">
+                      /h
+                    </span>
+                  </span>
+                )}
+              </Link>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }
@@ -342,104 +450,46 @@ export default function AdminDashboard({ user }: { user: AppUser }) {
       .finally(() => setLoadingToday(false));
   }, []);
 
-  const today = format(new Date(), "EEEE d MMMM", { locale: it });
   const activeFields = fieldList.filter((f) => Boolean(f.status)).length;
 
   return (
     <div className="flex flex-col gap-5 pb-4">
-      {/* Greeting + inline stats */}
-      <div>
-        <p className="text-xs text-muted-foreground capitalize mb-0.5">
-          {today}
-        </p>
-        <h1 className="text-2xl font-bold tracking-tight">
-          {getGreeting()}, {user.name ?? user.nickname ?? "Amministratore"}
-        </h1>
+      {/* Hero: greeting + stats */}
+      <HeroCard
+        user={user}
+        incomingCount={incoming.length}
+        todayCount={todayReservations.length}
+        activeFields={activeFields}
+        totalFields={fieldList.length}
+        loadingIncoming={loadingIncoming}
+        loadingToday={loadingToday}
+        loadingFields={loadingFields}
+      />
 
-        {/* Inline stats — contextual text, not hero cards */}
-        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-2.5 text-sm">
-          <Link
-            href="/dashboard/prenotazioni"
-            className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition-colors"
-          >
-            {loadingIncoming ? (
-              <span className="inline-block h-3.5 w-3 rounded bg-muted animate-pulse" />
-            ) : (
-              <span
-                className={cn(
-                  "font-mono font-semibold tabular-nums",
-                  incoming.length > 0
-                    ? "text-amber-600 dark:text-amber-400"
-                    : "text-foreground",
-                )}
-              >
-                {incoming.length}
-              </span>
-            )}
-            <span>in attesa</span>
-          </Link>
-
-          <span className="text-border select-none" aria-hidden>
-            ·
-          </span>
-
-          <Link
-            href="/dashboard/partite"
-            className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition-colors"
-          >
-            {loadingToday ? (
-              <span className="inline-block h-3.5 w-3 rounded bg-muted animate-pulse" />
-            ) : (
-              <span className="font-mono font-semibold tabular-nums text-foreground">
-                {todayReservations.length}
-              </span>
-            )}
-            <span>oggi</span>
-          </Link>
-
-          <span className="text-border select-none" aria-hidden>
-            ·
-          </span>
-
-          <Link
-            href="/dashboard/campi"
-            className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition-colors"
-          >
-            {loadingFields ? (
-              <span className="inline-block h-3.5 w-3 rounded bg-muted animate-pulse" />
-            ) : (
-              <span className="font-mono font-semibold tabular-nums text-emerald-600 dark:text-emerald-400">
-                {activeFields}/{fieldList.length}
-              </span>
-            )}
-            <span>campi attivi</span>
-          </Link>
-        </div>
-      </div>
-
-      {/* Incoming alert — only visible when action is required */}
+      {/* Incoming alert */}
       {!loadingIncoming && incoming.length > 0 && (
         <Link
           href="/dashboard/prenotazioni"
-          className="flex items-center gap-3 rounded-2xl bg-amber-50 dark:bg-amber-950/20 border border-amber-100 dark:border-amber-900/40 px-4 py-3.5 hover:bg-amber-100/60 dark:hover:bg-amber-950/30 transition-colors"
+          className="flex items-center gap-3 rounded-2xl bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900/40 px-4 py-3.5 hover:bg-amber-100/70 dark:hover:bg-amber-950/30 transition-colors"
         >
           <AlertCircle className="w-4 h-4 text-amber-500 shrink-0" />
-          <span className="flex-1 text-sm">
-            <span className="font-semibold">{incoming.length}</span> prenotazion
+          <span className="flex-1 text-sm text-amber-800 dark:text-amber-300">
+            <span className="font-semibold">{incoming.length}</span>{" "}
+            prenotazion
             {incoming.length === 1 ? "e richiede" : "i richiedono"} approvazione
           </span>
           <ArrowRight className="w-4 h-4 text-amber-400 shrink-0" />
         </Link>
       )}
 
-      {/* Today's reservations */}
-      <TodayReservations
-        reservations={todayReservations}
-        loading={loadingToday}
-      />
-
-      {/* Fields overview */}
-      <FieldsOverview fieldList={fieldList} loading={loadingFields} />
+      {/* Main content: 2-col on large screens */}
+      <div className="grid grid-cols-1 lg:grid-cols-[3fr_2fr] gap-5">
+        <TodayReservations
+          reservations={todayReservations}
+          loading={loadingToday}
+        />
+        <FieldsOverview fieldList={fieldList} loading={loadingFields} />
+      </div>
     </div>
   );
 }
