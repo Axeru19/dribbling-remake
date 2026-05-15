@@ -6,6 +6,10 @@ export const metadata: Metadata = {
   title: "Centro Sportivo Dribbling",
   description: "Gestione prenotazioni Centro Sportivo Dribbling",
   applicationName: "C.S. Dribbling",
+  icons: {
+    icon: "/icons/icon-192x192.png",
+    apple: "/icons/apple-touch-icon.png",
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
