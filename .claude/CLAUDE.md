@@ -132,3 +132,7 @@ Questa sezione raccoglie decisioni tecniche non ovvie emerse durante lo sviluppo
 **TypeScript narrowing**: dentro `{payStep === "found" && ...}` TS narra payStep come `"found"`, comparare con `"paying"` causa errore. Fix: `(payStep === "found" || payStep === "paying") && ...`.
 
 **Date/time format**: `date` → `"2024-01-15T00:00:00.000Z"` (usa `format()` da date-fns). `start_time`/`end_time` → `"1970-01-01T10:30:00.000Z"` (estrarre `.toISOString().substring(11, 16)`).
+
+### Docker — output standalone
+
+`next.config.ts` deve avere `output: "standalone"`. Senza, il Dockerfile fallisce con `"/app/.next/standalone": not found` al `COPY --from=builder`. Non rimuovere questa opzione.
