@@ -43,13 +43,16 @@ next-env.d.ts
 
 /lib/generated/prisma
 
+<<<<<<< Updated upstream
 # PWA generated files
 /public/sw.js
 /public/sw.js.map
 /public/workbox-*.js
 /public/workbox-*.js.map
+=======
 /lib/generated/prisma
 
 .dockerignore
 Dockerfile
 docker-compose.yaml
+>>>>>>> Stashed changes
