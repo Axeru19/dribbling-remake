@@ -6,6 +6,8 @@ import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { ReservationPostRequest } from "@/types/types";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { Plus } from "lucide-react";
 import { ReservationStatus } from "@/lib/enums";
 import { Timeslots } from "@/lib/constants";
 
@@ -92,6 +94,7 @@ function EventBlock({ reservation }: EventBlockProps) {
       className="absolute left-0.5 right-0.5 group z-10"
       style={{ top: topPx, height: heightPx }}
       title={`${displayName} — ${startLabel}→${endLabel}`}
+      onClick={(e) => e.stopPropagation()}
     >
       <div
         className={`w-full h-full rounded-md border-l-[3px] transition-colors duration-150 overflow-hidden px-1.5 py-1 flex flex-col justify-start shadow-sm ${
@@ -119,6 +122,51 @@ function EventBlock({ reservation }: EventBlockProps) {
   );
 }
 
+// ─── FieldColumn ─────────────────────────────────────────────────────────────
+
+interface FieldColumnProps {
+  fieldReservations: view_reservations[];
+  totalHeight: number;
+  onSlotClick: (start: string, end: string) => void;
+  className?: string;
+  style?: React.CSSProperties;
+}
+
+function FieldColumn({ fieldReservations, totalHeight, onSlotClick, className = "", style }: FieldColumnProps) {
+  return (
+    <div
+      className={`relative ${className}`}
+      style={{ height: totalHeight, ...style }}
+    >
+      {/* Per-slot hover zones — CSS-only hover, immune to JS event propagation */}
+      {Timeslots.map((start, idx) => {
+        const [h] = start.split(":").map(Number);
+        const end = `${String((h + 1) % 24).padStart(2, "0")}:00`;
+        return (
+          <div
+            key={start}
+            className="absolute left-0 right-0 z-[5] group/slot cursor-pointer"
+            style={{ top: idx * HOUR_HEIGHT, height: HOUR_HEIGHT }}
+            onClick={() => onSlotClick(start, end)}
+          >
+            <div className="absolute inset-[2px] rounded border border-transparent flex items-center justify-center opacity-0 group-hover/slot:opacity-100 group-hover/slot:bg-muted/50 group-hover/slot:border-border/40 group-hover/slot:border-dashed group-active/slot:opacity-100 group-active/slot:bg-primary/15 group-active/slot:border-primary/25 transition-all duration-75 pointer-events-none">
+              <div className="flex items-center gap-1 text-muted-foreground/50 group-active/slot:text-primary/70">
+                <Plus className="size-3" />
+                <span className="text-[10px] font-semibold tracking-wide">Nuova</span>
+              </div>
+            </div>
+          </div>
+        );
+      })}
+
+      {/* Event blocks render above slot zones (z-10 > z-[5]) */}
+      {fieldReservations.map((reservation) => (
+        <EventBlock key={reservation.id} reservation={reservation} />
+      ))}
+    </div>
+  );
+}
+
 // ─── DayView ──────────────────────────────────────────────────────────────────
 
 interface DayViewProps {
@@ -141,6 +189,7 @@ interface DayViewProps {
 export default function DayView({ day, swipeHandlers }: DayViewProps) {
   const fields: fields[] = useFields().sort((a, b) => a.id - b.id);
   const [reservations, setReservations] = useState<view_reservations[]>([]);
+  const router = useRouter();
 
   // ── Fetch prenotazioni confermate per il giorno ────────────────────────────
   useEffect(() => {
@@ -269,18 +318,16 @@ export default function DayView({ day, swipeHandlers }: DayViewProps) {
                 );
 
                 return (
-                  <div
+                  <FieldColumn
                     key={field.id}
-                    className="relative border-r border-border/40 last:border-r-0"
-                    style={{ height: totalHeight }}
-                  >
-                    {fieldReservations.map((reservation) => (
-                      <EventBlock
-                        key={reservation.id}
-                        reservation={reservation}
-                      />
-                    ))}
-                  </div>
+                    fieldReservations={fieldReservations}
+                    totalHeight={totalHeight}
+                    onSlotClick={(start, end) => {
+                      const dateStr = day.toISOString().slice(0, 10);
+                      router.push(`/dashboard/partite/new?date=${dateStr}&start=${start}&end=${end}&fieldId=${field.id}`);
+                    }}
+                    className="border-r border-border/40 last:border-r-0"
+                  />
                 );
               })}
             </div>

@@ -27,6 +27,10 @@ import {
 interface ReservationUserSelectionProps {
   user: users_wallets | null;
   setUser: (user: users_wallets | null) => void;
+  prefillDate?: string;
+  prefillStart?: string;
+  prefillEnd?: string;
+  prefillFieldId?: number;
 }
 
 /** Restituisce le iniziali dall'utente (max 2 caratteri) */
@@ -39,6 +43,10 @@ function getInitials(name?: string | null, surname?: string | null): string {
 export default function ReservationUserSelection({
   user,
   setUser,
+  prefillDate,
+  prefillStart,
+  prefillEnd,
+  prefillFieldId,
 }: ReservationUserSelectionProps) {
   const [userSearch, setUserSearch] = useState<string>("");
   const [userList, setUserList] = useState<users_wallets[] | null>(null);
@@ -83,9 +91,13 @@ export default function ReservationUserSelection({
       ? "/api/reservations/insert-fixed"
       : "/api/reservations/insert";
 
+    const prefill = prefillDate && prefillStart && prefillEnd && prefillFieldId
+      ? { date: prefillDate, start: prefillStart, end: prefillEnd, fieldId: prefillFieldId }
+      : {};
+
     const body = isFixed
-      ? { user: userSelected, weeks: weeksCount }
-      : { user: userSelected };
+      ? { user: userSelected, weeks: weeksCount, ...prefill }
+      : { user: userSelected, ...prefill };
 
     fetch(endpoint, {
       method: "POST",

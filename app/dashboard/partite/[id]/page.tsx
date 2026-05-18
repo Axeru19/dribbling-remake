@@ -28,6 +28,23 @@ import { toast } from "sonner";
 export default function Page({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
 
+  const [prefill, setPrefill] = useState<{
+    date?: string;
+    start?: string;
+    end?: string;
+    fieldId?: number;
+  }>({});
+
+  useEffect(() => {
+    const sp = new URLSearchParams(window.location.search);
+    setPrefill({
+      date: sp.get("date") ?? undefined,
+      start: sp.get("start") ?? undefined,
+      end: sp.get("end") ?? undefined,
+      fieldId: sp.get("fieldId") ? Number(sp.get("fieldId")) : undefined,
+    });
+  }, []);
+
   const [reservation, setReservation] = useState<reservations | null>(null);
   const [reservationUser, setReservationUser] = useState<users_wallets | null>(
     null,
@@ -228,7 +245,7 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
       <div className="flex flex-col gap-6 lg:flex-1 lg:min-h-0 lg:flex-row">
         {/* Colonna sinistra: form dettaglio */}
         {reservation && (
-          <div className="lg:flex-1 h-full lg:min-w-0 lg:min-h-0 lg:overflow-auto">
+          <div className="lg:flex-1 lg:min-w-0 lg:min-h-0 lg:overflow-auto">
             <ReservationDetailForm reservation={reservation} />
           </div>
         )}
@@ -246,6 +263,10 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
             <ReservationUserSelection
               user={reservationUser}
               setUser={setReservationUser}
+              prefillDate={prefill.date}
+              prefillStart={prefill.start}
+              prefillEnd={prefill.end}
+              prefillFieldId={prefill.fieldId}
             />
           </div>
         )}
