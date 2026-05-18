@@ -141,7 +141,7 @@ export default function ReservationDetailForm({
   }
 
   return (
-    <div className="w-full h-full rounded-xl border border-border bg-card shadow-sm flex flex-col">
+    <div className="w-full lg:h-full rounded-xl border border-border bg-card shadow-sm flex flex-col">
       {/* Header card */}
       <div className="flex shrink-0 items-center gap-3 px-6 py-4 border-b border-border">
         <div className="flex items-center justify-center size-9 rounded-lg bg-primary/10">
@@ -158,213 +158,213 @@ export default function ReservationDetailForm({
       </div>
 
       {/* Form body */}
-      <div className="flex-1 overflow-auto">
-      <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(updateReservation)}
-          className="flex flex-col gap-6 p-6"
-        >
-          {/* ── Sezione: Data & Orari ─────────────────────────── */}
-          <div>
-            <p className="text-xs font-medium text-muted-foreground uppercase tracking-widest mb-3">
-              Quando
-            </p>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              {/* Data */}
-              <FormField
-                control={form.control}
-                name="date"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="flex items-center gap-1.5 text-sm">
-                      <CalendarDays className="size-3.5 text-muted-foreground" />
-                      Data
-                    </FormLabel>
-                    <Input type="date" {...field} />
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              {/* Orario inizio */}
-              <FormField
-                control={form.control}
-                name="start_time"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="flex items-center gap-1.5 text-sm">
-                      <Clock className="size-3.5 text-muted-foreground" />
-                      Inizio
-                    </FormLabel>
-                    <Input type="time" {...field} />
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              {/* Orario fine */}
-              <FormField
-                control={form.control}
-                name="end_time"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="flex items-center gap-1.5 text-sm">
-                      <Clock3 className="size-3.5 text-muted-foreground" />
-                      Fine
-                    </FormLabel>
-                    <Input type="time" {...field} />
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-          </div>
-
-          {/* Divider */}
-          <div className="border-t border-border" />
-
-          {/* ── Sezione: Luogo & Configurazione ─────────────────── */}
-          <div>
-            <p className="text-xs font-medium text-muted-foreground uppercase tracking-widest mb-3">
-              Configurazione
-            </p>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              {/* Campo */}
-              <FormField
-                control={form.control}
-                name="id_field"
-                render={({ field }) => (
-                  <FormItem className="sm:col-span-2">
-                    <FormLabel className="flex items-center gap-1.5 text-sm">
-                      <MapPin className="size-3.5 text-muted-foreground" />
-                      Campo
-                    </FormLabel>
-                    <Select
-                      value={String(field.value)}
-                      onValueChange={(value) => field.onChange(Number(value))}
-                    >
-                      <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Seleziona un campo" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {availableFields.map((f) => (
-                          <SelectItem key={f.id} value={String(f.id)}>
-                            {f.description}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              {/* Spogliatoio */}
-              <FormField
-                control={form.control}
-                name="room"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="flex items-center gap-1.5 text-sm">
-                      <DoorOpen className="size-3.5 text-muted-foreground" />
-                      Spogliatoio
-                    </FormLabel>
-                    <Input type="text" placeholder="Es. A1" {...field} />
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-
-            {/* Squadre miste — row separata per enfasi */}
-            <FormField
-              control={form.control}
-              name="mixed"
-              render={({ field }) => (
-                <FormItem className="mt-4">
-                  <div className="flex items-center justify-between rounded-lg border border-border bg-muted/40 px-4 py-3">
-                    <div className="flex items-center gap-2.5">
-                      <Users2 className="size-4 text-muted-foreground" />
-                      <div>
-                        <FormLabel className="text-sm font-medium leading-none">
-                          Squadre miste
-                        </FormLabel>
-                        <p className="text-xs text-muted-foreground mt-0.5">
-                          Abilita la modalità con squadre di genere misto
-                        </p>
-                      </div>
-                    </div>
-                    <Switch
-                      checked={Boolean(field.value)}
-                      onCheckedChange={(checked) => field.onChange(checked)}
-                      onBlur={field.onBlur}
-                    />
-                  </div>
-                </FormItem>
-              )}
-            />
-          </div>
-
-          {/* Divider */}
-          <div className="border-t border-border" />
-
-          {/* ── Sezione: Note ─────────────────────────────────── */}
-          <div>
-            <p className="text-xs font-medium text-muted-foreground uppercase tracking-widest mb-3">
-              Note
-            </p>
-            <FormField
-              control={form.control}
-              name="notes"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="flex items-center gap-1.5 text-sm">
-                    <StickyNote className="size-3.5 text-muted-foreground" />
-                    Note aggiuntive
-                  </FormLabel>
-                  <Textarea
-                    className="min-h-[100px] resize-none"
-                    placeholder="Aggiungi note o istruzioni speciali..."
-                    {...field}
-                  />
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-
-          {/* ── Toggle aggiorna serie (solo prenotazioni fisse) ── */}
-          {reservation?.id_reservation_fixed != null && (
-            <div className="flex items-center justify-between rounded-lg border border-amber-500/30 bg-amber-500/5 px-4 py-3">
-              <div className="flex items-center gap-2.5">
-                <Repeat2 className="size-4 text-amber-600" />
-                <div>
-                  <p className="text-sm font-medium leading-none">
-                    Aggiorna tutta la serie
-                  </p>
-                  <p className="text-xs text-muted-foreground mt-0.5">
-                    Applica orario a tutte le prenotazioni della serie
-                  </p>
-                </div>
-              </div>
-              <Switch
-                checked={updateSeries}
-                onCheckedChange={setUpdateSeries}
-              />
-            </div>
-          )}
-
-          {/* ── CTA ───────────────────────────────────────────── */}
-          <Button
-            type="submit"
-            disabled={!reservation}
-            className="w-full gap-2"
+      <div className="lg:flex-1 lg:overflow-auto">
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit(updateReservation)}
+            className="flex flex-col gap-6 p-6"
           >
-            <Save className="size-4" />
-            {updateSeries ? "Salva e aggiorna serie" : "Salva modifiche"}
-          </Button>
-        </form>
-      </Form>
+            {/* ── Sezione: Data & Orari ─────────────────────────── */}
+            <div>
+              <p className="text-xs font-medium text-muted-foreground uppercase tracking-widest mb-3">
+                Quando
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                {/* Data */}
+                <FormField
+                  control={form.control}
+                  name="date"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="flex items-center gap-1.5 text-sm">
+                        <CalendarDays className="size-3.5 text-muted-foreground" />
+                        Data
+                      </FormLabel>
+                      <Input type="date" {...field} />
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                {/* Orario inizio */}
+                <FormField
+                  control={form.control}
+                  name="start_time"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="flex items-center gap-1.5 text-sm">
+                        <Clock className="size-3.5 text-muted-foreground" />
+                        Inizio
+                      </FormLabel>
+                      <Input type="time" {...field} />
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                {/* Orario fine */}
+                <FormField
+                  control={form.control}
+                  name="end_time"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="flex items-center gap-1.5 text-sm">
+                        <Clock3 className="size-3.5 text-muted-foreground" />
+                        Fine
+                      </FormLabel>
+                      <Input type="time" {...field} />
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </div>
+
+            {/* Divider */}
+            <div className="border-t border-border" />
+
+            {/* ── Sezione: Luogo & Configurazione ─────────────────── */}
+            <div>
+              <p className="text-xs font-medium text-muted-foreground uppercase tracking-widest mb-3">
+                Configurazione
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                {/* Campo */}
+                <FormField
+                  control={form.control}
+                  name="id_field"
+                  render={({ field }) => (
+                    <FormItem className="sm:col-span-2">
+                      <FormLabel className="flex items-center gap-1.5 text-sm">
+                        <MapPin className="size-3.5 text-muted-foreground" />
+                        Campo
+                      </FormLabel>
+                      <Select
+                        value={String(field.value)}
+                        onValueChange={(value) => field.onChange(Number(value))}
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Seleziona un campo" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {availableFields.map((f) => (
+                            <SelectItem key={f.id} value={String(f.id)}>
+                              {f.description}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                {/* Spogliatoio */}
+                <FormField
+                  control={form.control}
+                  name="room"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="flex items-center gap-1.5 text-sm">
+                        <DoorOpen className="size-3.5 text-muted-foreground" />
+                        Spogliatoio
+                      </FormLabel>
+                      <Input type="text" placeholder="Es. A1" {...field} />
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              {/* Squadre miste — row separata per enfasi */}
+              <FormField
+                control={form.control}
+                name="mixed"
+                render={({ field }) => (
+                  <FormItem className="mt-4">
+                    <div className="flex items-center justify-between rounded-lg border border-border bg-muted/40 px-4 py-3">
+                      <div className="flex items-center gap-2.5">
+                        <Users2 className="size-4 text-muted-foreground" />
+                        <div>
+                          <FormLabel className="text-sm font-medium leading-none">
+                            Squadre miste
+                          </FormLabel>
+                          <p className="text-xs text-muted-foreground mt-0.5">
+                            Abilita la modalità con squadre di genere misto
+                          </p>
+                        </div>
+                      </div>
+                      <Switch
+                        checked={Boolean(field.value)}
+                        onCheckedChange={(checked) => field.onChange(checked)}
+                        onBlur={field.onBlur}
+                      />
+                    </div>
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            {/* Divider */}
+            <div className="border-t border-border" />
+
+            {/* ── Sezione: Note ─────────────────────────────────── */}
+            <div>
+              <p className="text-xs font-medium text-muted-foreground uppercase tracking-widest mb-3">
+                Note
+              </p>
+              <FormField
+                control={form.control}
+                name="notes"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="flex items-center gap-1.5 text-sm">
+                      <StickyNote className="size-3.5 text-muted-foreground" />
+                      Note aggiuntive
+                    </FormLabel>
+                    <Textarea
+                      className="min-h-[100px] resize-none"
+                      placeholder="Aggiungi note o istruzioni speciali..."
+                      {...field}
+                    />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            {/* ── Toggle aggiorna serie (solo prenotazioni fisse) ── */}
+            {reservation?.id_reservation_fixed != null && (
+              <div className="flex items-center justify-between rounded-lg border border-amber-500/30 bg-amber-500/5 px-4 py-3">
+                <div className="flex items-center gap-2.5">
+                  <Repeat2 className="size-4 text-amber-600" />
+                  <div>
+                    <p className="text-sm font-medium leading-none">
+                      Aggiorna tutta la serie
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-0.5">
+                      Applica orario a tutte le prenotazioni della serie
+                    </p>
+                  </div>
+                </div>
+                <Switch
+                  checked={updateSeries}
+                  onCheckedChange={setUpdateSeries}
+                />
+              </div>
+            )}
+
+            {/* ── CTA ───────────────────────────────────────────── */}
+            <Button
+              type="submit"
+              disabled={!reservation}
+              className="w-full gap-2"
+            >
+              <Save className="size-4" />
+              {updateSeries ? "Salva e aggiorna serie" : "Salva modifiche"}
+            </Button>
+          </form>
+        </Form>
       </div>
     </div>
   );

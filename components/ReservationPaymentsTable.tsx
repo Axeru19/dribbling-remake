@@ -31,7 +31,7 @@ export default function ReservationPaymentsTable({
   const payments: unknown[] = [];
 
   return (
-    <div className="w-full h-full rounded-xl border border-border bg-card shadow-sm flex flex-col">
+    <div className="w-full lg:h-full rounded-xl border border-border bg-card shadow-sm flex flex-col">
       {/* Header card */}
       <div className="flex items-center justify-between px-6 py-4 border-b border-border">
         <div className="flex items-center gap-3">
@@ -55,7 +55,7 @@ export default function ReservationPaymentsTable({
       </div>
 
       {/* Corpo: tabella o empty state */}
-      <div className="flex-1 overflow-auto">
+      <div className="lg:flex-1 lg:overflow-auto">
         {payments.length === 0 ? (
           /* ── Empty state ──────────────────────────────────── */
           <div className="flex flex-col items-center justify-center gap-3 py-16 px-6 text-center">

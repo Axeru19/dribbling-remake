@@ -64,11 +64,14 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
   function deleteSeriesReservations() {
     if (!reservation?.id_reservation_fixed) return;
 
-    fetch(`/api/reservations/fixed/${reservation.id_reservation_fixed}/status`, {
-      method: "PUT",
-      body: JSON.stringify({ status: ReservationStatus.DELETED }),
-      headers: { "Content-Type": "application/json" },
-    })
+    fetch(
+      `/api/reservations/fixed/${reservation.id_reservation_fixed}/status`,
+      {
+        method: "PUT",
+        body: JSON.stringify({ status: ReservationStatus.DELETED }),
+        headers: { "Content-Type": "application/json" },
+      },
+    )
       .then((res) => {
         if (!res.ok) throw new Error("Network response was not ok");
         return res.json();
@@ -126,7 +129,7 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
     : (reservation?.user_not_registered ?? "");
 
   return (
-    <div className="h-full flex flex-col gap-6 overflow-hidden">
+    <div className="flex flex-col gap-6 lg:h-full lg:overflow-hidden">
       {/* ── Hero Header ─────────────────────────────────────────────────── */}
       <div className="rounded-xl border border-border bg-card shadow-sm overflow-hidden">
         {/* Striscia decorativa superiore */}
@@ -222,24 +225,24 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
       </div>
 
       {/* ── Corpo pagina ────────────────────────────────────────────────── */}
-      <div className="flex-1 min-h-0 flex flex-col lg:flex-row gap-6">
+      <div className="flex flex-col gap-6 lg:flex-1 lg:min-h-0 lg:flex-row">
         {/* Colonna sinistra: form dettaglio */}
         {reservation && (
-          <div className="flex-1 min-w-0 min-h-0 overflow-auto">
+          <div className="lg:flex-1 h-full lg:min-w-0 lg:min-h-0 lg:overflow-auto">
             <ReservationDetailForm reservation={reservation} />
           </div>
         )}
 
         {/* Colonna destra: tabella pagamenti */}
         {reservation && (
-          <div className="flex-1 min-w-0 min-h-0 overflow-auto">
+          <div className="lg:flex-1 lg:min-w-0 lg:min-h-0 lg:overflow-auto">
             <ReservationPaymentsTable reservation={reservation} />
           </div>
         )}
 
         {/* Vista "new": selezione utente */}
         {!reservation && !loading && (
-          <div className="flex-1 min-w-0 min-h-0 overflow-auto">
+          <div className="lg:flex-1 lg:min-w-0 lg:min-h-0 lg:overflow-auto">
             <ReservationUserSelection
               user={reservationUser}
               setUser={setReservationUser}
@@ -250,8 +253,8 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
         {/* Skeleton per colonne in caricamento */}
         {loading && (
           <>
-            <div className="flex-1 min-h-0 rounded-xl border border-border bg-card shadow-sm animate-pulse" />
-            <div className="flex-1 min-h-0 rounded-xl border border-border bg-card shadow-sm animate-pulse" />
+            <div className="h-64 lg:flex-1 lg:min-h-0 rounded-xl border border-border bg-card shadow-sm animate-pulse" />
+            <div className="h-64 lg:flex-1 lg:min-h-0 rounded-xl border border-border bg-card shadow-sm animate-pulse" />
           </>
         )}
       </div>

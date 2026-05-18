@@ -136,3 +136,14 @@ Questa sezione raccoglie decisioni tecniche non ovvie emerse durante lo sviluppo
 ### Docker — output standalone
 
 `next.config.ts` deve avere `output: "standalone"`. Senza, il Dockerfile fallisce con `"/app/.next/standalone": not found` al `COPY --from=builder`. Non rimuovere questa opzione.
+
+### PWA Service Worker blocca hot reload in development
+
+`next.config.ts` usa `@ducanh2912/next-pwa` con `aggressiveFrontEndNavCaching: true`. Se `disable: false`, il SW è attivo anche in dev e serve la versione cachata — nessuna modifica è visibile nel browser.
+
+**Configurazione corretta:**
+```ts
+disable: process.env.NODE_ENV === "development",
+```
+
+Se le modifiche non appaiono: DevTools → Application → Service Workers → Unregister, poi hard refresh (`Ctrl+Shift+R`).
